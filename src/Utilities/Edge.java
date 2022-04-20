@@ -33,10 +33,18 @@ public class Edge {
 
     // Checks to see if the edge intersects with a downwards-pointing ray originating at a specified vertex
     protected boolean intersectsWithRayAt(Vertex v) {
-        if (start.x == end.x)
-            return start.x == v.x;
+        float[] sCoords = start.getCoords();
+        float[] eCoords = end.getCoords();
+        float[] vCoords = v.getCoords();
 
-        float result = (end.y - start.y) * (v.x - start.x) / (end.x - start.x + 1.0f) + start.y;
-        return result >= v.y;
+        if (sCoords[0] == eCoords[0])
+            return sCoords[0] == vCoords[0];
+
+        float dir = Math.signum(eCoords[0] - sCoords[0]);
+        if (Math.signum(vCoords[0] - sCoords[0]) != dir || Math.signum(eCoords[0] - vCoords[0]) != dir)
+            return false;
+
+        float intersection = (eCoords[1] - sCoords[1]) * (vCoords[0] - sCoords[0]) / (eCoords[0] - sCoords[0]) + sCoords[1];
+        return intersection >= vCoords[1];
     }
 }

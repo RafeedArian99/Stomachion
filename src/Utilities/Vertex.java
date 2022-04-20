@@ -1,7 +1,8 @@
 package Utilities;
 
 public class Vertex {
-    public final int x, y;
+    private float[] coords;
+    public static final Object RETAIN = null;
 
     /**
      * Constructs a Vertex object
@@ -9,9 +10,8 @@ public class Vertex {
      * @param x x-coordinate of the vertex
      * @param y y-coordinate of the vertex
      */
-    public Vertex(int x, int y) {
-        this.x = x;
-        this.y = y;
+    public Vertex(float x, float y) {
+        coords = new float[] {x, y};
     }
 
     /**
@@ -19,9 +19,19 @@ public class Vertex {
      *
      * @param coords coordinates of the vertex
      */
-    public Vertex(int[] coords) {
-        this.x = coords[0];
-        this.y = coords[1];
+    public Vertex(float[] coords) {
+        this.coords = coords;
+    }
+
+    public void setCoords(Float x, Float y) {
+        if (x != RETAIN)
+            coords[0] = x;
+        if (y != RETAIN)
+            coords[1] = y;
+    }
+
+    public float[] getCoords() {
+        return this.coords;
     }
 
     /**
@@ -31,18 +41,18 @@ public class Vertex {
      * @return new vertex that results from the addition of the offset
      */
     public Vertex add(Vertex offset) {
-        return new Vertex(this.x + offset.x, this.y + offset.y);
+        return new Vertex(this.coords[0] + offset.coords[0], this.coords[1] + offset.coords[1]);
     }
 
     @Override
     public boolean equals(Object o) {
         assert o instanceof Vertex;
         Vertex v = (Vertex) o;
-        return v.x == this.x && v.y == this.y;
+        return v.coords[0] == this.coords[0] && v.coords[1] == this.coords[1];
     }
 
     @Override
     public String toString() {
-        return "(" + this.x + "," + this.y + ")";
+        return "(" + this.coords[0] + "," + this.coords[1] + ")";
     }
 }
