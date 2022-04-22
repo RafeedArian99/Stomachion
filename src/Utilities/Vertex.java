@@ -1,8 +1,7 @@
 package Utilities;
 
 public class Vertex {
-    private float[] coords;
-    public static final Object RETAIN = null;
+    private final double[] coords;
 
     /**
      * Constructs a Vertex object
@@ -10,8 +9,8 @@ public class Vertex {
      * @param x x-coordinate of the vertex
      * @param y y-coordinate of the vertex
      */
-    public Vertex(float x, float y) {
-        coords = new float[] {x, y};
+    public Vertex(double x, double y) {
+        coords = new double[]{x, y};
     }
 
     /**
@@ -19,18 +18,27 @@ public class Vertex {
      *
      * @param coords coordinates of the vertex
      */
-    public Vertex(float[] coords) {
+    public Vertex(double[] coords) {
         this.coords = coords;
     }
 
-    public void setCoords(Float x, Float y) {
-        if (x != RETAIN)
-            coords[0] = x;
-        if (y != RETAIN)
-            coords[1] = y;
+    public void setX(double x) {
+        coords[0] = x;
     }
 
-    public float[] getCoords() {
+    public void setY(double y) {
+        coords[1] = y;
+    }
+
+    public double getX() {
+        return coords[0];
+    }
+
+    public double getY() {
+        return coords[1];
+    }
+
+    public double[] getCoords() {
         return this.coords;
     }
 

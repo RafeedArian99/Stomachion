@@ -1,29 +1,31 @@
 package View;
 
+import Utilities.Piece;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.VBox;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 
 import Controller.Controller;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Scanner;
 
 public class View extends Application implements Observer {
     private Controller controller; // TODO: Instantiate in main
+    private Canvas mainLayer, selectionLayer;
 
-    private static final int CELL_SIZE = 20;
-    private static final int WINDOW_SIZE = CELL_SIZE * 36;
+    private static final double CELL_SIZE = 25;
+    private static final double WINDOW_SIZE = CELL_SIZE * 36;
 
-    // Testing variables. TODO: Remove
-
+    private static final double LINE_WIDTH = 4;
+    private static final Color LINE_COLOR = Color.GRAY;
 
     public static void main(String args) {
         launch(args);
@@ -38,17 +40,102 @@ public class View extends Application implements Observer {
     public void start(Stage stage) throws Exception {
         stage.setTitle("Stomachion");
 
-        // Test canvas
-        Canvas canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.GREEN);
-        gc.fillRect(0, 0, CELL_SIZE, CELL_SIZE);
+        // Place grid
+        GraphicsContext gc;
+
+        mainLayer = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+        gc = mainLayer.getGraphicsContext2D();
+        gc.setStroke(LINE_COLOR);
+        gc.setLineWidth(LINE_WIDTH);
+        gc.setLineCap(StrokeLineCap.ROUND);
+        mainLayer.setOnMousePressed(new MousePressHandler());
+
+        selectionLayer = new Canvas(CELL_SIZE * 12, CELL_SIZE * 12);
+        gc = selectionLayer.getGraphicsContext2D();
+        gc.setLineWidth(LINE_WIDTH);
+        selectionLayer.setLayoutX(WINDOW_SIZE);
+        selectionLayer.setLayoutY(WINDOW_SIZE);
+        gc.save();
+
+        Canvas gridLayer = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+        gc = gridLayer.getGraphicsContext2D();
+        gc.setFill(LINE_COLOR);
+        for (int i = 0; i < 37; i++) {
+            for (int j = 0; j < 37; j++) {
+                gc.fillOval(i * CELL_SIZE - LINE_WIDTH / 2, j * CELL_SIZE - LINE_WIDTH / 2,
+                        LINE_WIDTH, LINE_WIDTH);
+            }
+        }
+
+        // Test Canvas
+        Piece[] pieces = new Piece[14];
+        for (int i = 0; i < 14; i++) {
+            Piece piece = (pieces[i] = new Piece(i));
+            switch (i) {
+                case 0:
+                case 10:
+                    piece.setGlobalOffset(6, 0);
+                    break;
+                case 1:
+                case 12:
+                    piece.setGlobalOffset(3, 0);
+                    break;
+                case 4:
+                    piece.setGlobalOffset(4, 8);
+                    break;
+                case 5:
+                case 11:
+                    piece.setGlobalOffset(10, 8);
+                    break;
+                case 6:
+                    piece.setGlobalOffset(8, 4);
+                    break;
+                case 7:
+                    piece.setGlobalOffset(9, 6);
+                    break;
+                case 9:
+                    piece.setGlobalOffset(2, 10);
+                    break;
+                case 13:
+                    piece.setGlobalOffset(12, 4);
+            }
+            System.out.println(i);
+            drawPiece(piece, mainLayer);
+        }
 
         // Show initial setup
         Group group = new Group();
-        group.getChildren().addAll(canvas);
+        group.getChildren().addAll(gridLayer, mainLayer, selectionLayer);
+        System.out.println(group.getLayoutBounds());
         Scene scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
+    }
+
+    private void drawPiece(Piece piece, Canvas canvas) {
+        double[][] allCoords = piece.getAllCoords(CELL_SIZE);
+        double[] xCoords = allCoords[0];
+        double[] yCoords = allCoords[1];
+
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.PINK);
+        gc.fillPolygon(xCoords, yCoords, xCoords.length);
+
+        for (int i = 0; i < xCoords.length; i++) {
+            double endX = i == xCoords.length - 1 ? xCoords[0] : xCoords[i + 1];
+            double endY = i == yCoords.length - 1 ? yCoords[0] : yCoords[i + 1];
+
+            gc.strokeLine(xCoords[i], yCoords[i], endX, endY);
+        }
+    }
+
+    private class MousePressHandler implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+//            if (piece.encapsulates(mouseEvent.getSceneX() / CELL_SIZE, mouseEvent.getSceneY() / CELL_SIZE)) {
+//                System.out.println("Here");
+//            }
+        }
     }
 }
