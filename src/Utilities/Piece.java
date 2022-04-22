@@ -64,6 +64,10 @@ public class Piece {
         this.globalOffset = new Vertex(x, y);
     }
 
+    public double[] getGlobalOffset() {
+        return globalOffset.getCoords();
+    }
+
     /**
      * Returns true if this piece is colliding with another one.
      *

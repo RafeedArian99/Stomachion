@@ -7,8 +7,10 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 
@@ -23,9 +25,10 @@ public class View extends Application implements Observer {
 
     private static final double CELL_SIZE = 25;
     private static final double WINDOW_SIZE = CELL_SIZE * 36;
+    private static final double BOARD_SIZE = CELL_SIZE * 12;
 
     private static final double LINE_WIDTH = 4;
-    private static final Color LINE_COLOR = Color.GRAY;
+    private static final Color LINE_COLOR = Color.DARKGRAY;
 
     public static void main(String args) {
         launch(args);
@@ -50,7 +53,7 @@ public class View extends Application implements Observer {
         gc.setLineCap(StrokeLineCap.ROUND);
         mainLayer.setOnMousePressed(new MousePressHandler());
 
-        selectionLayer = new Canvas(CELL_SIZE * 12, CELL_SIZE * 12);
+        selectionLayer = new Canvas(BOARD_SIZE, BOARD_SIZE);
         gc = selectionLayer.getGraphicsContext2D();
         gc.setLineWidth(LINE_WIDTH);
         selectionLayer.setLayoutX(WINDOW_SIZE);
@@ -119,7 +122,8 @@ public class View extends Application implements Observer {
         double[] yCoords = allCoords[1];
 
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.PINK);
+        Image texture = new Image("/Textures/BlueCrimsonYellow.png");
+        gc.setFill(new ImagePattern(texture, xCoords[0], yCoords[0], CELL_SIZE * 5, CELL_SIZE * 5, false));
         gc.fillPolygon(xCoords, yCoords, xCoords.length);
 
         for (int i = 0; i < xCoords.length; i++) {
