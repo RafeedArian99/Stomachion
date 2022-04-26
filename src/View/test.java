@@ -1,7 +1,6 @@
 package View;
 
 import Utilities.Piece;
-import Utilities.Vertex;
 
 public class test {
     public static void main(String[] args) {

@@ -1,6 +1,6 @@
 package Utilities;
 
-public class Vertex {
+class Vertex {
     private final double[] coords;
 
     /**

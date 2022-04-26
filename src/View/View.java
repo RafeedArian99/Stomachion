@@ -8,7 +8,6 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -157,9 +156,7 @@ public class View extends Application implements Observer {
                 GraphicsContext gc = mainCanvas.getGraphicsContext2D();
                 gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
 
-//                boolean isClockwise = mouseEvent.getButton() == MouseButton.PRIMARY;
-//                piece.rotate(gridX, gridY, isClockwise);
-                piece.flipHorizontallyAbout(gridX);
+                piece.flipAbout(gridX, gridY, false);
                 drawPiece(piece, mainCanvas);
             }
         }

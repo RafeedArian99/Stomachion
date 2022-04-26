@@ -1,6 +1,6 @@
 package Utilities;
 
-public class Edge {
+class Edge {
     public final Vertex start, end;
 
     /**
