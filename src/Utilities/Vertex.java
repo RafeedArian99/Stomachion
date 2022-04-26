@@ -22,6 +22,10 @@ public class Vertex {
         this.coords = coords;
     }
 
+    public Vertex inverse() {
+        return new Vertex(-this.getX(), -this.getY());
+    }
+
     public void setX(double x) {
         coords[0] = x;
     }
@@ -38,10 +42,6 @@ public class Vertex {
         return coords[1];
     }
 
-    public double[] getCoords() {
-        return this.coords;
-    }
-
     /**
      * Adds an offset to this vertex, then returns the result. Does not modify this vertex.
      *
@@ -49,14 +49,36 @@ public class Vertex {
      * @return new vertex that results from the addition of the offset
      */
     public Vertex add(Vertex offset) {
-        return new Vertex(this.coords[0] + offset.coords[0], this.coords[1] + offset.coords[1]);
+        return new Vertex(this.getX() + offset.getX(), this.getY() + offset.getY());
+    }
+
+    /**
+     * Rotates this vertex about (0, 0).
+     * @param isClockwise whether or not vertex is to be rotated clockwise or counter-clockwise.
+     */
+    public void rotate(boolean isClockwise) {
+        int dir = isClockwise ? 1 : -1;
+        double temp = this.getX();
+
+        this.setX(dir * this.getY());
+        this.setY(-dir * temp);
+    }
+
+    // TODO: Implement
+    public void flipVerticallyAbout(double y) {
+
+    }
+
+    // TODO: Implement
+    public void flipHorizontallyAbout(double x) {
+
     }
 
     @Override
     public boolean equals(Object o) {
         assert o instanceof Vertex;
         Vertex v = (Vertex) o;
-        return v.coords[0] == this.coords[0] && v.coords[1] == this.coords[1];
+        return v.getX() == this.getX() && v.getY() == this.getY();
     }
 
     @Override

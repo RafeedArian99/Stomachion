@@ -1,10 +1,11 @@
 package Utilities;
 
 public class Piece {
-    private Vertex globalOffset;
+    private final Vertex globalOffset;
     private final Edge[] localEdges;
     private final int pieceID;
     private int rotation;
+    private boolean flipped;
 
     /**
      * Constructs a Piece object
@@ -49,34 +50,27 @@ public class Piece {
         double[][] allCoords = new double[2][localEdges.length];
         for (int i = 0; i < localEdges.length; i++) {
             Vertex globalVertex = localEdges[i].start.add(globalOffset);
-            allCoords[0][i] = globalVertex.getCoords()[0] * cellSize;
-            allCoords[1][i] = globalVertex.getCoords()[1] * cellSize;
+            allCoords[0][i] = globalVertex.getX() * cellSize;
+            allCoords[1][i] = globalVertex.getY() * cellSize;
         }
 
         return allCoords;
     }
 
-    public int getNumEdges() {
-        return localEdges.length;
-    }
-
-    public void setGlobalOffset(double x, double y) {
-        this.globalOffset = new Vertex(x, y);
-    }
-
-    public double[] getGlobalOffset() {
-        return globalOffset.getCoords();
+    public void addToGlobalOffset(double x, double y) {
+        this.globalOffset.setX(this.globalOffset.getX() + x);
+        this.globalOffset.setY(this.globalOffset.getY() + y);
     }
 
     /**
      * Returns true if this piece is colliding with another one.
      *
-     * @param p piece whose collision is to be tested
+     * @param other piece whose collision is to be tested
      * @return true if this piece is colliding with another one
      */
-    public boolean collidesWith(Piece p) {
+    public boolean collidesWith(Piece other) {
         for (Edge localEdge : localEdges) {
-            if (p.encapsulates(localEdge.start)) {
+            if (other.encapsulates(localEdge.start)) {
                 return true;
             }
         }
@@ -84,14 +78,39 @@ public class Piece {
         return false;
     }
 
-    // TODO: Implement more features
-    public void rotate() {
+    // TODO: Implement correctly
+    public void rotate(double x, double y, boolean isClockwise) {
+        Vertex rotationPoint = new Vertex(x, y);
+
+        Vertex adjustedOffset = globalOffset.add(rotationPoint.inverse());
+        adjustedOffset.rotate(isClockwise);
+        adjustedOffset = adjustedOffset.add(rotationPoint);
+
         for (Edge localEdge : localEdges) {
-            Vertex start = localEdge.start;
-            double temp = start.getX();
-            start.setX(start.getY());
-            start.setY(temp);
+            Vertex adjustedVertex = localEdge.start.add(globalOffset).add(rotationPoint.inverse());
+            adjustedVertex.rotate(isClockwise);
+            adjustedVertex = adjustedVertex.add(rotationPoint).add(adjustedOffset.inverse());
+
+            localEdge.start.setX(adjustedVertex.getX());
+            localEdge.start.setY(adjustedVertex.getY());
         }
+
+        globalOffset.setX(adjustedOffset.getX());
+        globalOffset.setY(adjustedOffset.getY());
+    }
+
+    public void rotateCounterClockwiseAbout(double x, double y) {
+
+    }
+
+    // TODO: Implement
+    public void flipVerticallyAbout(double x, double y) {
+        flipped = !flipped;
+    }
+
+    // TODO: Implement
+    public void flipHorizontallyAbout(double x, double y) {
+        flipped = !flipped;
     }
 
     @Override
@@ -119,7 +138,6 @@ public class Piece {
                 count++;
         }
 
-        System.out.println(count);
         return count == 1;
     }
 }
