@@ -66,12 +66,12 @@ public class Vertex {
 
     // TODO: Implement
     public void flipVerticallyAbout(double y) {
-
+        this.setY(2 * y - this.getY());
     }
 
     // TODO: Implement
     public void flipHorizontallyAbout(double x) {
-
+        this.setX(2 * x - this.getX());
     }
 
     @Override

@@ -78,7 +78,12 @@ public class Piece {
         return false;
     }
 
-    // TODO: Implement correctly
+    /**
+     * Rotates this piece about a given coordinate in global space.
+     * @param x x-coordinate of rotation point
+     * @param y y-coordinate of rotation point
+     * @param isClockwise whether or not piece is to rotate clockwise or counter-clockwise
+     */
     public void rotate(double x, double y, boolean isClockwise) {
         Vertex rotationPoint = new Vertex(x, y);
 
@@ -97,19 +102,43 @@ public class Piece {
 
         globalOffset.setX(adjustedOffset.getX());
         globalOffset.setY(adjustedOffset.getY());
+
+        rotation = Math.floorMod(rotation + (isClockwise ? 90 : -90), 360);
     }
 
-    public void rotateCounterClockwiseAbout(double x, double y) {
+    /**
+     * Flips this piece vertically about a given y-coordinate
+     * @param y y-coordinate to flip about
+     */
+    public void flipVerticallyAbout(double y) {
+        Vertex adjustedOffset = new Vertex(globalOffset.getX(), globalOffset.getY());
+        adjustedOffset.flipVerticallyAbout(y);
 
-    }
+        for (Edge localEdge : localEdges) {
+            Vertex adjustedVertex = localEdge.start.add(globalOffset);
+            adjustedVertex.flipVerticallyAbout(y);
+            localEdge.start.setY(adjustedVertex.add(adjustedOffset.inverse()).getY());
+        }
 
-    // TODO: Implement
-    public void flipVerticallyAbout(double x, double y) {
+        globalOffset.setY(adjustedOffset.getY());
         flipped = !flipped;
     }
 
-    // TODO: Implement
-    public void flipHorizontallyAbout(double x, double y) {
+    /**
+     * Flips this piece horizontally about a given x-coordinate
+     * @param x x-coordinate to flip about
+     */
+    public void flipHorizontallyAbout(double x) {
+        Vertex adjustedOffset = new Vertex(globalOffset.getX(), globalOffset.getY());
+        adjustedOffset.flipHorizontallyAbout(x);
+
+        for (Edge localEdge : localEdges) {
+            Vertex adjustedVertex = localEdge.start.add(globalOffset);
+            adjustedVertex.flipHorizontallyAbout(x);
+            localEdge.start.setX(adjustedVertex.add(adjustedOffset.inverse()).getX());
+        }
+
+        globalOffset.setX(adjustedOffset.getX());
         flipped = !flipped;
     }
 

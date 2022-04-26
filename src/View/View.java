@@ -157,8 +157,9 @@ public class View extends Application implements Observer {
                 GraphicsContext gc = mainCanvas.getGraphicsContext2D();
                 gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
 
-                boolean isClockwise = mouseEvent.getButton() == MouseButton.PRIMARY;
-                piece.rotate(gridX, gridY, isClockwise);
+//                boolean isClockwise = mouseEvent.getButton() == MouseButton.PRIMARY;
+//                piece.rotate(gridX, gridY, isClockwise);
+                piece.flipHorizontallyAbout(gridX);
                 drawPiece(piece, mainCanvas);
             }
         }
