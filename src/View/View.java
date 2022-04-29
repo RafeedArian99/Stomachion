@@ -156,7 +156,7 @@ public class View extends Application implements Observer {
                 GraphicsContext gc = mainCanvas.getGraphicsContext2D();
                 gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
 
-                piece.flipAbout(gridX, gridY, false);
+                piece.flipAbout(gridX, gridY, Piece.VERTICAL_FLIP);
                 drawPiece(piece, mainCanvas);
             }
         }
