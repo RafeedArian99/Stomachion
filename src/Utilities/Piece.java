@@ -13,7 +13,11 @@ public class Piece {
     private boolean flipped;
 
     private boolean selected = false;
-    private boolean valid = true;
+    private PieceState highlighted = PieceState.NEUTRAL;
+
+    public enum PieceState {
+        NEUTRAL, VALID, INVALID
+    }
 
     /**
      * Constructs a Piece object
@@ -62,12 +66,12 @@ public class Piece {
         return this.selected;
     }
 
-    public void setValid(boolean state) {
-        this.valid = state;
+    public void highlight(PieceState state) {
+        this.highlighted = state;
     }
 
-    public boolean isValid() {
-        return this.valid;
+    public PieceState getHighlightState() {
+        return this.highlighted;
     }
 
     public double[][] getAllCoords(double cellSize) {
