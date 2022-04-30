@@ -57,7 +57,7 @@ class Vertex {
      * @param isClockwise whether or not vertex is to be rotated clockwise or counter-clockwise.
      */
     public void rotate(boolean isClockwise) {
-        int dir = isClockwise ? 1 : -1;
+        int dir = isClockwise ? -1 : 1;
         double temp = this.getX();
 
         this.setX(dir * this.getY());
