@@ -153,6 +153,23 @@ public class Piece {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Piece))
+            return false;
+
+        Piece other = (Piece) o;
+        if (other.localEdges.length != this.localEdges.length)
+            return false;
+
+        for (int i = 0; i < this.localEdges.length; i++) {
+            if (!this.localEdges[i].start.equals(other.localEdges[i].start))
+                return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public String toString() {
         String rep = "{PieceID=" + pieceID + ",GlobalOffset=" + globalOffset + ",Rotation=" + rotation + ",LocalEdges={";
         int i = 0;

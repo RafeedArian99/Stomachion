@@ -76,9 +76,11 @@ class Vertex {
 
     @Override
     public boolean equals(Object o) {
-        assert o instanceof Vertex;
-        Vertex v = (Vertex) o;
-        return v.getX() == this.getX() && v.getY() == this.getY();
+        if (!(o instanceof Vertex))
+            return false;
+
+        Vertex other = (Vertex) o;
+        return other.getX() == this.getX() && other.getY() == this.getY();
     }
 
     @Override
