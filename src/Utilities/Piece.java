@@ -1,11 +1,19 @@
 package Utilities;
 
 public class Piece {
+    public static final boolean VERTICAL_FLIP = true;
+    public static final boolean HORIZONTAL_FLIP = false;
+    public static final boolean CLOCKWISE = true;
+    public static final boolean COUNTER_CLOCKWISE = false;
+
     private final Vertex globalOffset;
     private final Edge[] localEdges;
     private final int pieceID;
     private int rotation;
     private boolean flipped;
+
+    private boolean selected = false;
+    private boolean valid = true;
 
     /**
      * Constructs a Piece object
@@ -44,6 +52,22 @@ public class Piece {
         }
 
         this.globalOffset = new Vertex(0, 0);
+    }
+
+    public void setSelected(boolean state) {
+        this.selected = state;
+    }
+
+    public boolean isSelected() {
+        return this.selected;
+    }
+
+    public void setValid(boolean state) {
+        this.valid = state;
+    }
+
+    public boolean isValid() {
+        return this.valid;
     }
 
     public double[][] getAllCoords(double cellSize) {
@@ -85,24 +109,18 @@ public class Piece {
      * @param y           y-coordinate of rotation point
      * @param isClockwise whether or not piece is to rotate clockwise or counter-clockwise
      */
-    public void rotate(double x, double y, boolean isClockwise) {
+    public void rotateAbout(double x, double y, boolean isClockwise) {
         Vertex rotationPoint = new Vertex(x, y);
 
         Vertex adjustedOffset = globalOffset.add(rotationPoint.inverse());
         adjustedOffset.rotate(isClockwise);
         adjustedOffset = adjustedOffset.add(rotationPoint);
-
-        for (Edge localEdge : localEdges) {
-            Vertex adjustedVertex = localEdge.start.add(globalOffset).add(rotationPoint.inverse());
-            adjustedVertex.rotate(isClockwise);
-            adjustedVertex = adjustedVertex.add(rotationPoint).add(adjustedOffset.inverse());
-
-            localEdge.start.setX(adjustedVertex.getX());
-            localEdge.start.setY(adjustedVertex.getY());
-        }
-
         globalOffset.setX(adjustedOffset.getX());
         globalOffset.setY(adjustedOffset.getY());
+
+        for (Edge localEdge : localEdges) {
+            localEdge.start.rotate(isClockwise);
+        }
 
         rotation = Math.floorMod(rotation + (isClockwise ? 90 : -90), 360);
     }
