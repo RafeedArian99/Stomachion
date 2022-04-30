@@ -12,6 +12,9 @@ public class Piece {
     private int rotation;
     private boolean flipped;
 
+    private boolean selected = false;
+    private boolean valid = true;
+
     /**
      * Constructs a Piece object
      *
@@ -49,6 +52,22 @@ public class Piece {
         }
 
         this.globalOffset = new Vertex(0, 0);
+    }
+
+    public void setSelected(boolean state) {
+        this.selected = state;
+    }
+
+    public boolean isSelected() {
+        return this.selected;
+    }
+
+    public void setValid(boolean state) {
+        this.valid = state;
+    }
+
+    public boolean isValid() {
+        return this.valid;
     }
 
     public double[][] getAllCoords(double cellSize) {

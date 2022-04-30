@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
@@ -16,12 +17,14 @@ import javafx.stage.Stage;
 
 import Controller.Controller;
 
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application implements Observer {
     private Controller controller; // TODO: Instantiate in main
     private Canvas mainCanvas, selectionCanvas;
+    private double initialCoordsX, initialCoordsY;
 
     private static final double CELL_SIZE = 25;
     private static final double WINDOW_SIZE = CELL_SIZE * 36;
@@ -29,6 +32,8 @@ public class View extends Application implements Observer {
 
     private static final double LINE_WIDTH = 2;
     private static final Color LINE_COLOR = Color.rgb(36, 36, 36);
+    private static final Color BG_COLOR = Color.grayRgb(230);
+    private static final Color FG_COLOR = Color.WHITE;
 
     // TODO: Delete these variables
     Piece piece;
@@ -38,13 +43,18 @@ public class View extends Application implements Observer {
     }
 
     @Override
-    public void update(Observable o, Object arg) {
+    public void update(Observable o, Object piecesRaw) {
+        assert piecesRaw instanceof HashSet[];
+
+        HashSet<Integer>[] pieces = (HashSet<Integer>[]) piecesRaw;
 
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Stomachion");
+
+        controller = new Controller();
 
         // Initialize all canvasses
         GraphicsContext gc;
@@ -55,73 +65,41 @@ public class View extends Application implements Observer {
         gc.setLineWidth(LINE_WIDTH);
         gc.setLineCap(StrokeLineCap.ROUND);
         mainCanvas.setOnMousePressed(new MousePressHandler());
+        mainCanvas.setOnMouseMoved(new MouseMoveHandler());
 
         selectionCanvas = new Canvas(BOARD_SIZE, BOARD_SIZE);
         gc = selectionCanvas.getGraphicsContext2D();
         gc.setLineWidth(LINE_WIDTH);
         selectionCanvas.setLayoutX(WINDOW_SIZE);
         selectionCanvas.setLayoutY(WINDOW_SIZE);
+        selectionCanvas.setOnMouseReleased(new MouseReleaseHandler());
+        selectionCanvas.setOnKeyPressed(new KeyPressHandler());
         gc.save();
 
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
+        gc.setFill(FG_COLOR);
+        gc.fillRect(BOARD_SIZE, BOARD_SIZE, BOARD_SIZE, BOARD_SIZE);
         gc.setFill(LINE_COLOR);
         for (int i = 0; i < 37; i++) {
             for (int j = 0; j < 37; j++) {
-                gc.fillOval(i * CELL_SIZE - LINE_WIDTH / 2, j * CELL_SIZE - LINE_WIDTH / 2,
-                        LINE_WIDTH, LINE_WIDTH);
+                gc.fillOval(i * CELL_SIZE - LINE_WIDTH / 2, j * CELL_SIZE - LINE_WIDTH / 2, LINE_WIDTH, LINE_WIDTH);
             }
         }
+        gc.setStroke(LINE_COLOR);
+        gc.setLineWidth(LINE_WIDTH);
+        gc.strokeRect(BOARD_SIZE, BOARD_SIZE, BOARD_SIZE, BOARD_SIZE);
 
         // Test Canvas
         piece = new Piece(2);
         piece.addToGlobalOffset(6, 4);
         drawPiece(piece, mainCanvas);
-//        Piece[] pieces = new Piece[14];
-//        for (int i = 0; i < 14; i++) {
-//            Piece piece = (pieces[i] = new Piece(i));
-//            switch (i) {
-//                case 0:
-//                case 10:
-//                    piece.addToGlobalOffset(6, 0);
-//                    break;
-//                case 1:
-//                case 12:
-//                    piece.addToGlobalOffset(3, 0);
-//                    break;
-//                case 4:
-//                    piece.addToGlobalOffset(4, 8);
-//                    break;
-//                case 5:
-//                case 11:
-//                    piece.addToGlobalOffset(10, 8);
-//                    break;
-//                case 6:
-//                    piece.addToGlobalOffset(8, 4);
-//                    break;
-//                case 7:
-//                    piece.addToGlobalOffset(9, 6);
-//                    break;
-//                case 9:
-//                    piece.addToGlobalOffset(2, 10);
-//                    this.piece = piece;
-//                    break;
-//                case 13:
-//                    piece.addToGlobalOffset(12, 4);
-//            }
-//            piece.addToGlobalOffset(12, 12);
-//            System.out.print(i + " ");
-//            long startTime = System.nanoTime();
-//            drawPiece(piece, mainLayer);
-//            long endTime = System.nanoTime();
-//
-//            System.out.println((startTime - endTime) / 1000000);
-//        }
 
         // Show initial setup
         Group group = new Group();
         group.getChildren().addAll(gridCanvas, mainCanvas, selectionCanvas);
         Scene scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
+        scene.setFill(BG_COLOR);
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
@@ -147,18 +125,52 @@ public class View extends Application implements Observer {
         }
     }
 
-    private class MousePressHandler implements EventHandler<MouseEvent> {
+    // TODO: Implement
+    private class MouseMoveHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent mouseEvent) {
             double gridX = mouseEvent.getSceneX() / CELL_SIZE;
             double gridY = mouseEvent.getSceneY() / CELL_SIZE;
-            if (piece.encapsulates(gridX, gridY)) {
-                GraphicsContext gc = mainCanvas.getGraphicsContext2D();
-                gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
 
-                piece.flipAbout(gridX, gridY, Piece.VERTICAL_FLIP);
-                drawPiece(piece, mainCanvas);
+            if (controller.hasPieceSelected()) {
+                controller.checkPlacement(gridX, gridY);
             }
+            else {
+                controller.highlight(gridX, gridY);
+            }
+        }
+    }
+
+    private class MousePressHandler implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+            if (mouseEvent.isPrimaryButtonDown()) {
+                initialCoordsX = mouseEvent.getSceneX();
+                initialCoordsY = mouseEvent.getSceneY();
+
+                double gridX = initialCoordsX / CELL_SIZE;
+                double gridY = initialCoordsY / CELL_SIZE;
+                controller.pluckPiece(gridX, gridY);
+            }
+        }
+    }
+
+    // TODO: Implement
+    private class MouseReleaseHandler implements EventHandler<MouseEvent> {
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+            if (controller.hasPieceSelected()) {
+                controller.placePiece();
+            }
+        }
+    }
+
+    // TODO: Implement
+    // Note: Model shouldn't update the view
+    private class KeyPressHandler implements EventHandler<KeyEvent> {
+        @Override
+        public void handle(KeyEvent keyEvent) {
+
         }
     }
 }
