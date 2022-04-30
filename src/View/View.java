@@ -43,6 +43,7 @@ public class View extends Application implements Observer {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void update(Observable o, Object piecesRaw) {
         assert piecesRaw instanceof HashSet[];
 
