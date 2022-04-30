@@ -160,6 +160,8 @@ public class Piece {
         Piece other = (Piece) o;
         if (other.localEdges.length != this.localEdges.length)
             return false;
+        if (!other.globalOffset.equals(this.globalOffset))
+            return false;
 
         for (int i = 0; i < this.localEdges.length; i++) {
             if (!this.localEdges[i].start.equals(other.localEdges[i].start))
