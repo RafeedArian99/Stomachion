@@ -29,7 +29,7 @@ public class View extends Application implements Observer {
 
     private static final double LINE_WIDTH = 2;
     private static final Color NEUTRAL_LINE_COLOR = Color.rgb(36, 36, 36);
-    private static final Color VALID_LINE_COLOR = Color.rgb(38, 128, 0);
+    private static final Color VALID_LINE_COLOR = Color.rgb(74, 255, 0);
     private static final Color INVALID_LINE_COLOR = Color.rgb(128, 0, 0);
 
     private static final Color BG_COLOR = Color.grayRgb(230);
@@ -40,21 +40,6 @@ public class View extends Application implements Observer {
 
     public static void main(String args) {
         launch(args);
-    }
-
-    @Override
-    public void update(Observable o, Object piecesRaw) {
-        assert piecesRaw instanceof Piece[];
-
-        mainCanvas.getGraphicsContext2D().clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
-
-        Piece[] pieces = (Piece[]) piecesRaw;
-        Piece highlighted;
-        for (Piece piece : pieces) {
-            if (!piece.isSelected()) {
-                drawPiece(piece, mainCanvas);
-            }
-        }
     }
 
     @Override
@@ -105,6 +90,30 @@ public class View extends Application implements Observer {
         stage.show();
 
         controller = new Controller(this);
+    }
+
+    @Override
+    public void update(Observable o, Object piecesRaw) {
+        assert piecesRaw instanceof Piece[];
+
+        mainCanvas.getGraphicsContext2D().clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
+
+        Piece[] pieces = (Piece[]) piecesRaw;
+        Piece highlightedPiece = null;
+        for (Piece piece : pieces) {
+            if (!piece.isSelected()) {
+                if (piece.getHighlightState() == Piece.PieceState.NEUTRAL)
+                    drawPiece(piece, mainCanvas);
+                else
+                    highlightedPiece = piece;
+            }
+        }
+
+        if (highlightedPiece != null) {
+            if (!highlightedPiece.isSelected()) {
+                drawPiece(highlightedPiece, mainCanvas);
+            }
+        }
     }
 
     private void drawPiece(Piece piece, Canvas canvas) {

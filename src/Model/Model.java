@@ -42,6 +42,9 @@ public class Model extends Observable {
     public void highlight(double gridX, double gridY) {
     	Piece[] array = this.mainBox.getList();
     	for (int i = 0; i < 14; i++) {
+    		if (gridX == 6) {
+    			System.out.print("");
+			}
     		if (array[i].encapsulates(gridX, gridY)) {
     			array[i].highlight(PieceState.VALID);
     		}
