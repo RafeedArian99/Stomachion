@@ -2,6 +2,7 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Observer;
 
 import Utilities.*;
 import Utilities.Piece.PieceState;
@@ -14,9 +15,13 @@ public class Model extends Observable {
 	
 	private Piece selected;
 	
-	public Model() {
+	public Model(Observer observer) {
 		// TODO THIS DOES NOT NEED ANY ARGS NOW
 		this.mainBox = new BoundingBox(0, 0, 36, 36);
+
+		this.addObserver(observer);
+		setChanged();
+		notifyObservers(mainBox.getList());
 	}
 	
     @SuppressWarnings("deprecation")
@@ -39,8 +44,10 @@ public class Model extends Observable {
     	for (int i = 0; i < 14; i++) {
     		if (array[i].encapsulates(gridX, gridY)) {
     			array[i].highlight(PieceState.VALID);
-    			break;
     		}
+    		else {
+    			array[i].highlight(PieceState.NEUTRAL);
+			}
     	}
     	setChanged();
     	notifyObservers(this.mainBox.getList());

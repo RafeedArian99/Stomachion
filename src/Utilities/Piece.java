@@ -1,5 +1,9 @@
 package Utilities;
 
+import javafx.scene.paint.Color;
+
+import java.util.ArrayList;
+
 public class Piece {
     public static final boolean VERTICAL_FLIP = true;
     public static final boolean HORIZONTAL_FLIP = false;
@@ -14,6 +18,7 @@ public class Piece {
 
     private boolean selected = false;
     private PieceState highlighted = PieceState.NEUTRAL;
+    private Color color;
 
     public enum PieceState {
         NEUTRAL, VALID, INVALID
@@ -24,9 +29,9 @@ public class Piece {
      *
      * @param pieceID Unique ID for the piece (0-13)
      */
-    public Piece(int pieceID) {
+    public Piece(int pieceID, Color color) {
         this.pieceID = pieceID;
-        this.rotation = 0;
+        this.color = color;
 
         double[][][] allVertices = new double[][][]{
                 {{0, 0}, {3, 6}, {6, 4}, {6, 0}},           // ( 0) Opera House (24)
@@ -44,7 +49,6 @@ public class Piece {
                 {{0, 0}, {-1, 4}, {0, 6}},                  // (12) Small Icicle (3)
                 {{0, 0}, {-3, 2}, {0, 2}},                   // (13) Small Ramp (3)
         };
-
         double[][] vertices = allVertices[pieceID];
 
         localEdges = new Edge[vertices.length];
@@ -56,6 +60,10 @@ public class Piece {
         }
 
         this.globalOffset = new Vertex(0, 0);
+    }
+
+    public Color getColor() {
+        return this.color;
     }
 
     public void setSelected(boolean state) {

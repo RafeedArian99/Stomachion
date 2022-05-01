@@ -1,13 +1,16 @@
 package Utilities;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+
+import javafx.scene.image.PixelReader;
+import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
 public class BoundingBox {
 	
 	private Piece[] pieceList;
 	
-	private Vertex globalOffset; 
+	private Vertex globalOffset;
 	
 	private double width;
 	
@@ -15,9 +18,17 @@ public class BoundingBox {
 	
 	// TODO THIS DOES NOT NEED ANY ARGS NOW
 	public BoundingBox(double x1, double y1, double width, double height) {
+		Image texturePack = new Image("/Textures/final-14-1x.png");
+		PixelReader pixelReader = texturePack.getPixelReader();
+
+		ArrayList<Color> colors = new ArrayList<>();
+		for (int i = 0; i < 14; i++) {
+			colors.add(pixelReader.getColor(i, 0));
+		}
+
 		this.pieceList = new Piece[14];
 		for (int i = 0; i < 14; i++) {
-			Piece newPiece = new Piece(i);
+			Piece newPiece = new Piece(i, colors.remove((int) (Math.random() * (14 - i))));
 			pieceList[i] = newPiece;
 		}
 		this.globalOffset = new Vertex(x1, y1);
