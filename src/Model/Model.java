@@ -1,6 +1,5 @@
 package Model;
 
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -14,6 +13,9 @@ public class Model extends Observable {
 	private boolean selectionHas;
 	
 	private Piece selected;
+
+	private double selectedInitialX, selectedInitialY;
+	private double selectedGlobalX, selectedGlobalY;
 	
 	public Model(Observer observer) {
 		// TODO THIS DOES NOT NEED ANY ARGS NOW
@@ -32,6 +34,12 @@ public class Model extends Observable {
     			array[i].setSelected(true);
     			this.selectionHas = true;
     			this.selected = array[i];
+
+    			selectedInitialX = gridX;
+    			selectedInitialY = gridY;
+    			selectedGlobalX = selected.getGlobalX();
+    			selectedGlobalY = selected.getGlobalY();
+
     			break;
     		}
     	}
@@ -42,9 +50,6 @@ public class Model extends Observable {
     public void highlight(double gridX, double gridY) {
     	Piece[] array = this.mainBox.getList();
     	for (int i = 0; i < 14; i++) {
-    		if (gridX == 6) {
-    			System.out.print("");
-			}
     		if (array[i].encapsulates(gridX, gridY)) {
     			array[i].highlight(PieceState.VALID);
     		}
@@ -68,9 +73,14 @@ public class Model extends Observable {
     }
 
     public void checkPlacement(double gridX, double gridY) {
-    	
     }
-	
+
+	public void updateSelectedPosition(double gridX, double gridY) {
+		selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
+		setChanged();
+		notifyObservers(this.mainBox.getList());
+	}
+
 	// plucking removes from the main box and puts into the selection box
 	// placing removes form the selection box and places in the man box.private BoundingBox mainBox;private BoundingBox mainBox;private BoundingBox mainBox;
 	

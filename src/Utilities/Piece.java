@@ -98,6 +98,19 @@ public class Piece {
         this.globalOffset.setY(this.globalOffset.getY() + y);
     }
 
+    public void setGlobalOffset(double x, double y) {
+        this.globalOffset.setX(x);
+        this.globalOffset.setY(y);
+    }
+
+    public double getGlobalX() {
+        return this.globalOffset.getX();
+    }
+
+    public double getGlobalY() {
+        return this.globalOffset.getY();
+    }
+
     /**
      * Returns true if this piece is colliding with another one.
      *

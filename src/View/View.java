@@ -20,7 +20,7 @@ import java.util.Observer;
 
 public class View extends Application implements Observer {
     private Controller controller; // TODO: Instantiate in main
-    private Canvas mainCanvas, selectionCanvas;
+    private Canvas mainCanvas;
     private double initialCoordsX, initialCoordsY;
 
     private static final double CELL_SIZE = 25;
@@ -56,15 +56,8 @@ public class View extends Application implements Observer {
         gc.setLineCap(StrokeLineCap.ROUND);
         mainCanvas.setOnMousePressed(new MousePressHandler());
         mainCanvas.setOnMouseMoved(new MouseMoveHandler());
-
-        selectionCanvas = new Canvas(BOARD_SIZE, BOARD_SIZE);
-        gc = selectionCanvas.getGraphicsContext2D();
-        gc.setLineWidth(LINE_WIDTH);
-        selectionCanvas.setLayoutX(WINDOW_SIZE);
-        selectionCanvas.setLayoutY(WINDOW_SIZE);
-        selectionCanvas.setOnMouseReleased(new MouseReleaseHandler());
-        selectionCanvas.setOnKeyPressed(new KeyPressHandler());
-        gc.save();
+        mainCanvas.setOnMouseReleased(new MouseReleaseHandler());
+        mainCanvas.setOnMouseDragged(new MouseDragHandler());
 
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
@@ -82,7 +75,7 @@ public class View extends Application implements Observer {
 
         // Show initial setup
         Group group = new Group();
-        group.getChildren().addAll(gridCanvas, mainCanvas, selectionCanvas);
+        group.getChildren().addAll(gridCanvas, mainCanvas); //, selectionCanvas);
         Scene scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
         scene.setFill(BG_COLOR);
         stage.setScene(scene);
@@ -101,18 +94,14 @@ public class View extends Application implements Observer {
         Piece[] pieces = (Piece[]) piecesRaw;
         Piece highlightedPiece = null;
         for (Piece piece : pieces) {
-            if (!piece.isSelected()) {
-                if (piece.getHighlightState() == Piece.PieceState.NEUTRAL)
-                    drawPiece(piece, mainCanvas);
-                else
-                    highlightedPiece = piece;
-            }
+            if (piece.getHighlightState() == Piece.PieceState.NEUTRAL)
+                drawPiece(piece, mainCanvas);
+            else
+                highlightedPiece = piece;
         }
 
         if (highlightedPiece != null) {
-            if (!highlightedPiece.isSelected()) {
-                drawPiece(highlightedPiece, mainCanvas);
-            }
+            drawPiece(highlightedPiece, mainCanvas);
         }
     }
 
@@ -152,13 +141,7 @@ public class View extends Application implements Observer {
         public void handle(MouseEvent mouseEvent) {
             double gridX = mouseEvent.getSceneX() / CELL_SIZE;
             double gridY = mouseEvent.getSceneY() / CELL_SIZE;
-
-            if (controller.hasPieceSelected()) {
-                controller.checkPlacement(gridX, gridY);
-            }
-            else {
-                controller.highlight(gridX, gridY);
-            }
+            controller.highlight(gridX, gridY);
         }
     }
 
@@ -172,6 +155,19 @@ public class View extends Application implements Observer {
                 double gridX = initialCoordsX / CELL_SIZE;
                 double gridY = initialCoordsY / CELL_SIZE;
                 controller.pluckPiece(gridX, gridY);
+            }
+        }
+    }
+
+    private class MouseDragHandler implements EventHandler<MouseEvent> {
+
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+            if (controller.hasPieceSelected()) {
+                double gridX = mouseEvent.getSceneX() / CELL_SIZE;
+                double gridY = mouseEvent.getSceneY() / CELL_SIZE;
+
+                controller.updateSelectedPosition(gridX, gridY);
             }
         }
     }
