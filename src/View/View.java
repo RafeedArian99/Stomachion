@@ -183,7 +183,6 @@ public class View extends Application implements Observer {
     }
 
     // TODO: Implement
-    // Note: Model shouldn't update the view
     private class KeyPressHandler implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {

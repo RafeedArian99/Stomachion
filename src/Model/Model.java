@@ -50,6 +50,9 @@ public class Model extends Observable {
     public void highlight(double gridX, double gridY) {
     	Piece[] array = this.mainBox.getList();
     	for (int i = 0; i < 14; i++) {
+    		if (gridX == 2.0 && i == 3) {
+    			System.out.print("");
+			}
     		if (array[i].encapsulates(gridX, gridY)) {
     			array[i].highlight(PieceState.VALID);
     		}
@@ -68,6 +71,8 @@ public class Model extends Observable {
     public void placePiece() {
     	this.selected.setSelected(false);
     	this.selectionHas = false;
+    	this.selected.snapGlobalOffset();
+
     	setChanged();
     	notifyObservers(this.mainBox.getList());
     }

@@ -2,8 +2,6 @@ package Utilities;
 
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-
 public class Piece {
     public static final boolean VERTICAL_FLIP = true;
     public static final boolean HORIZONTAL_FLIP = false;
@@ -101,6 +99,11 @@ public class Piece {
     public void setGlobalOffset(double x, double y) {
         this.globalOffset.setX(x);
         this.globalOffset.setY(y);
+    }
+
+    public void snapGlobalOffset() {
+        this.globalOffset.setX(Math.round(this.globalOffset.getX()));
+        this.globalOffset.setY(Math.round(this.globalOffset.getY()));
     }
 
     public double getGlobalX() {
@@ -210,13 +213,15 @@ public class Piece {
     /* Private functions */
 
     private boolean encapsulates(Vertex v) {
-        int count = 0;
+        int upCount = 0, downCount = 0;
 
         for (Edge localEdge : this.localEdges) {
-            if (localEdge.add(globalOffset).intersectsWithRayAt(v))
-                count++;
+            if (localEdge.add(globalOffset).intersectsWithRayFrom(v, Edge.DOWNCAST))
+                downCount++;
+            if (localEdge.add(globalOffset).intersectsWithRayFrom(v, Edge.UPCAST))
+                upCount++;
         }
 
-        return count == 1;
+        return downCount == 1 && upCount == 1;
     }
 }
