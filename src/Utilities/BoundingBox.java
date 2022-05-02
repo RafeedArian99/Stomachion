@@ -26,7 +26,7 @@ public class BoundingBox {
 		for (int i = 0; i < 14; i++) {
 			colors.add(pixelReader.getColor(i, 0));
 		}
-		
+
 		this.pieceList = new Piece[14];
 		for (int i = 0; i < 14; i++) {
 			Piece newPiece = new Piece(i, colors.remove((int) (Math.random() * (14 - i))));
@@ -42,13 +42,21 @@ public class BoundingBox {
 			
 			int counter = 0;
 			while (counter < 1) {
+				newPiece.resetGlobalOffset();
 				int x = (int)(Math.random() * 36);
 				int y = (int)(Math.random() * 36);
 				newPiece.addToGlobalOffset(x, y);
 				if (this.encapsulates(newPiece)) {
-					counter++;
+					boolean checker = false;
+					for (int j = 0; j < i; j++) {
+						if (newPiece.collidesWith(pieceList[j])) {
+							checker = true;
+						}
+					}
+					if (checker == false) {
+						counter++;
+					}
 				}
-				newPiece.resetGlobalOffset();
 			}
 			
 			pieceList[i] = newPiece;
@@ -69,8 +77,15 @@ public class BoundingBox {
 	}
 	
 	public boolean encapsulates(Piece piece) {
-		
-		return false;
+		double[][] pieceCoords = piece.getAllCoords(1);
+		for (double[] row : pieceCoords) {
+			for (double num : row) {
+				if (num < 0 || num >= 36 || (num > 12 && num < 24)) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	public boolean equals(BoundingBox otherBox) {
