@@ -60,10 +60,6 @@ public class Model extends Observable {
     public void checkPlacement(double gridX, double gridY) {
     	
     }
-	
-    public void test() {
-    	
-    }
     
 	// plucking removes from the main box and puts into the selection box
 	// placing removes form the selection box and places in the man box.private BoundingBox mainBox;private BoundingBox mainBox;private BoundingBox mainBox;

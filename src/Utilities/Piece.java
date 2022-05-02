@@ -6,7 +6,7 @@ public class Piece {
     public static final boolean CLOCKWISE = true;
     public static final boolean COUNTER_CLOCKWISE = false;
 
-    private final Vertex globalOffset;
+    private Vertex globalOffset;
     private final Edge[] localEdges;
     private final int pieceID;
     private int rotation;
@@ -186,6 +186,10 @@ public class Piece {
         return this.encapsulates(new Vertex(x, y));
     }
 
+    public void resetGlobalOffset() {
+    	this.globalOffset = new Vertex(0, 0);
+    }
+    
     /* Private functions */
 
     private boolean encapsulates(Vertex v) {
@@ -198,4 +202,5 @@ public class Piece {
 
         return count == 1;
     }
+    
 }
