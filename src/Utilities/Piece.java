@@ -1,5 +1,7 @@
 package Utilities;
 
+import javafx.scene.paint.Color;
+
 public class Piece {
     public static final boolean VERTICAL_FLIP = true;
     public static final boolean HORIZONTAL_FLIP = false;
@@ -12,14 +14,22 @@ public class Piece {
     private int rotation;
     private boolean flipped;
 
+    private boolean selected = false;
+    private PieceState highlighted = PieceState.NEUTRAL;
+    private Color color;
+
+    public enum PieceState {
+        NEUTRAL, VALID, INVALID
+    }
+
     /**
      * Constructs a Piece object
      *
      * @param pieceID Unique ID for the piece (0-13)
      */
-    public Piece(int pieceID) {
+    public Piece(int pieceID, Color color) {
         this.pieceID = pieceID;
-        this.rotation = 0;
+        this.color = color;
 
         double[][][] allVertices = new double[][][]{
                 {{0, 0}, {3, 6}, {6, 4}, {6, 0}},           // ( 0) Opera House (24)
@@ -37,7 +47,6 @@ public class Piece {
                 {{0, 0}, {-1, 4}, {0, 6}},                  // (12) Small Icicle (3)
                 {{0, 0}, {-3, 2}, {0, 2}},                   // (13) Small Ramp (3)
         };
-
         double[][] vertices = allVertices[pieceID];
 
         localEdges = new Edge[vertices.length];
@@ -49,6 +58,26 @@ public class Piece {
         }
 
         this.globalOffset = new Vertex(0, 0);
+    }
+
+    public Color getColor() {
+        return this.color;
+    }
+
+    public void setSelected(boolean state) {
+        this.selected = state;
+    }
+
+    public boolean isSelected() {
+        return this.selected;
+    }
+
+    public void highlight(PieceState state) {
+        this.highlighted = state;
+    }
+
+    public PieceState getHighlightState() {
+        return this.highlighted;
     }
 
     public double[][] getAllCoords(double cellSize) {
@@ -65,6 +94,24 @@ public class Piece {
     public void addToGlobalOffset(double x, double y) {
         this.globalOffset.setX(this.globalOffset.getX() + x);
         this.globalOffset.setY(this.globalOffset.getY() + y);
+    }
+
+    public void setGlobalOffset(double x, double y) {
+        this.globalOffset.setX(x);
+        this.globalOffset.setY(y);
+    }
+
+    public void snapGlobalOffset() {
+        this.globalOffset.setX(Math.round(this.globalOffset.getX()));
+        this.globalOffset.setY(Math.round(this.globalOffset.getY()));
+    }
+
+    public double getGlobalX() {
+        return this.globalOffset.getX();
+    }
+
+    public double getGlobalY() {
+        return this.globalOffset.getY();
     }
 
     /**
@@ -130,6 +177,25 @@ public class Piece {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Piece))
+            return false;
+
+        Piece other = (Piece) o;
+        if (other.localEdges.length != this.localEdges.length)
+            return false;
+        if (!other.globalOffset.equals(this.globalOffset))
+            return false;
+
+        for (int i = 0; i < this.localEdges.length; i++) {
+            if (!this.localEdges[i].start.equals(other.localEdges[i].start))
+                return false;
+        }
+
+        return true;
+    }
+
+    @Override
     public String toString() {
         String rep = "{PieceID=" + pieceID + ",GlobalOffset=" + globalOffset + ",Rotation=" + rotation + ",LocalEdges={";
         int i = 0;
@@ -147,13 +213,15 @@ public class Piece {
     /* Private functions */
 
     private boolean encapsulates(Vertex v) {
-        int count = 0;
+        int upCount = 0, downCount = 0;
 
         for (Edge localEdge : this.localEdges) {
-            if (localEdge.add(globalOffset).intersectsWithRayAt(v))
-                count++;
+            if (localEdge.add(globalOffset).intersectsWithRayFrom(v, Edge.DOWNCAST))
+                downCount++;
+            if (localEdge.add(globalOffset).intersectsWithRayFrom(v, Edge.UPCAST))
+                upCount++;
         }
 
-        return count == 1;
+        return downCount == 1 && upCount == 1;
     }
 }
