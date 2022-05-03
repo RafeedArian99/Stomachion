@@ -3,6 +3,7 @@ package View;
 import Utilities.Piece;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -20,8 +21,9 @@ import java.util.Observer;
 
 public class View extends Application implements Observer {
     private Controller controller; // TODO: Instantiate in main
-    private Canvas mainCanvas;
+    private Canvas mainCanvas, selectionCanvas;
     private double initialCoordsX, initialCoordsY;
+    private Scene scene;
 
     private static final double CELL_SIZE = 25;
     private static final double WINDOW_SIZE = CELL_SIZE * 36;
@@ -51,13 +53,21 @@ public class View extends Application implements Observer {
 
         mainCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = mainCanvas.getGraphicsContext2D();
-        gc.setStroke(NEUTRAL_LINE_COLOR);
         gc.setLineWidth(LINE_WIDTH);
         gc.setLineCap(StrokeLineCap.ROUND);
         mainCanvas.setOnMousePressed(new MousePressHandler());
         mainCanvas.setOnMouseMoved(new MouseMoveHandler());
-        mainCanvas.setOnMouseReleased(new MouseReleaseHandler());
-        mainCanvas.setOnMouseDragged(new MouseDragHandler());
+//        mainCanvas.setOnMouseReleased(new MouseReleaseHandler());
+//        mainCanvas.setOnMouseDragged(new MouseDragHandler());
+
+        selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+        gc = selectionCanvas.getGraphicsContext2D();
+        gc.setLineWidth(LINE_WIDTH);
+        gc.setLineCap(StrokeLineCap.ROUND);
+        selectionCanvas.setLayoutX(WINDOW_SIZE);
+        selectionCanvas.setLayoutY(WINDOW_SIZE);
+        selectionCanvas.setOnMouseDragEntered(new testDrag());
+        selectionCanvas.setOnKeyPressed(new KeyPressHandler());
 
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
@@ -75,14 +85,25 @@ public class View extends Application implements Observer {
 
         // Show initial setup
         Group group = new Group();
-        group.getChildren().addAll(gridCanvas, mainCanvas); //, selectionCanvas);
-        Scene scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
+        group.getChildren().addAll(gridCanvas, mainCanvas, selectionCanvas);
+        scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
         scene.setFill(BG_COLOR);
+        scene.setOnMouseDragged(new MouseDragHandler());
+        scene.setOnMouseReleased(new MouseReleaseHandler());
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
 
         controller = new Controller(this);
+    }
+
+    // TODO: Delete
+    private class testDrag implements EventHandler<MouseEvent> {
+
+        @Override
+        public void handle(MouseEvent mouseEvent) {
+            System.out.println("Here");
+        }
     }
 
     @Override
@@ -102,6 +123,10 @@ public class View extends Application implements Observer {
 
         if (highlightedPiece != null) {
             drawPiece(highlightedPiece, mainCanvas);
+            scene.setCursor(Cursor.MOVE);
+        }
+        else {
+            scene.setCursor(Cursor.DEFAULT);
         }
     }
 
@@ -186,7 +211,7 @@ public class View extends Application implements Observer {
     private class KeyPressHandler implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {
-
+            System.out.println("Here: " + ((Canvas) keyEvent.getSource()).getLayoutBounds());
         }
     }
 }
