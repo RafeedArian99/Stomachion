@@ -122,12 +122,22 @@ public class Piece {
      */
     public boolean collidesWith(Piece other) {
         for (Edge localEdge : localEdges) {
+        	//System.out.println("khehc");
             if (other.encapsulates(localEdge.start)) {
                 return true;
             }
         }
-
+        for (Edge otherEdge : other.getEdges()) {
+        	//System.out.println("check");
+            if (this.encapsulates(otherEdge.start)) {
+                return true;
+            }
+        }
         return false;
+    }
+    
+    public Edge[] getEdges() {
+    	return localEdges;
     }
 
     /**

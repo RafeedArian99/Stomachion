@@ -46,16 +46,17 @@ public class BoundingBox {
 				int x = (int)(Math.random() * 36);
 				int y = (int)(Math.random() * 36);
 				newPiece.addToGlobalOffset(x, y);
-				if (this.encapsulates(newPiece)) {
-					boolean checker = false;
-					for (int j = 0; j < i; j++) {
-						if (newPiece.collidesWith(pieceList[j])) {
-							checker = true;
-						}
+				boolean checker = false;
+				if (!(this.encapsulates(newPiece))) {
+					checker = true;
+				}
+				for (int j = 0; j < i; j++) {
+					if (newPiece.collidesWith(pieceList[j])) {
+						checker = true;
 					}
-					if (checker == false) {
-						counter++;
-					}
+				}
+				if (checker == false) {
+					counter++;
 				}
 			}
 			
@@ -78,9 +79,14 @@ public class BoundingBox {
 	
 	public boolean encapsulates(Piece piece) {
 		double[][] pieceCoords = piece.getAllCoords(1);
+		for (int i = 0; i < pieceCoords[0].length; i++) {
+			if (pieceCoords[0][i] > 12 && pieceCoords[0][i] < 24 && pieceCoords[1][i] > 12 && pieceCoords[1][i] < 24 ) {
+				return false;
+			}
+		}
 		for (double[] row : pieceCoords) {
 			for (double num : row) {
-				if (num < 0 || num >= 36 || (num > 12 && num < 24)) {
+				if (num < 0 || num >= 36) {
 					return false;
 				}
 			}
@@ -97,6 +103,4 @@ public class BoundingBox {
 		}
 		return check;
 	}
-	
-	
 }
