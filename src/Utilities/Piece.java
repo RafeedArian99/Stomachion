@@ -46,6 +46,7 @@ public class Piece {
                 {{0, 0}, {-6, 3}, {-4, 4}},                 // (11) Small Dagger (6)
                 {{0, 0}, {-1, 4}, {0, 6}},                  // (12) Small Icicle (3)
                 {{0, 0}, {-3, 2}, {0, 2}},                   // (13) Small Ramp (3)
+                {{0, 0}, {0, 12}, {12, 12}, {12, 0}}
         };
         double[][] vertices = allVertices[pieceID];
 

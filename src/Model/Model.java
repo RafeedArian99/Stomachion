@@ -8,6 +8,8 @@ import Utilities.Piece.PieceState;
 
 public class Model extends Observable {
 	
+	private boolean win = false;
+	
 	private BoundingBox mainBox;
 	
 	private boolean selectionHas;
