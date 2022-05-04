@@ -20,20 +20,27 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application implements Observer {
-    private Controller controller; // TODO: Instantiate in main
-    private Canvas mainCanvas, selectionCanvas;
-    private double initialCoordsX, initialCoordsY;
+    private Controller controller;
+    private Canvas mainCanvas;
     private Scene scene;
 
+    // Selection Canvas variables
+    private Canvas selectionCanvas;
+    private double initialMouseX, initialMouseY;
+    private boolean previouslySelected;
+
+    // Window settings
     private static final double CELL_SIZE = 25;
     private static final double WINDOW_SIZE = CELL_SIZE * 36;
     private static final double BOARD_SIZE = CELL_SIZE * 12;
 
+    // Line settings
     private static final double LINE_WIDTH = 2;
     private static final Color NEUTRAL_LINE_COLOR = Color.rgb(36, 36, 36);
     private static final Color VALID_LINE_COLOR = Color.rgb(74, 255, 0);
     private static final Color INVALID_LINE_COLOR = Color.rgb(128, 0, 0);
 
+    // Color settings
     private static final Color BG_COLOR = Color.grayRgb(230);
     private static final Color FG_COLOR = Color.WHITE;
 
@@ -57,17 +64,15 @@ public class View extends Application implements Observer {
         gc.setLineCap(StrokeLineCap.ROUND);
         mainCanvas.setOnMousePressed(new MousePressHandler());
         mainCanvas.setOnMouseMoved(new MouseMoveHandler());
-//        mainCanvas.setOnMouseReleased(new MouseReleaseHandler());
-//        mainCanvas.setOnMouseDragged(new MouseDragHandler());
 
         selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = selectionCanvas.getGraphicsContext2D();
         gc.setLineWidth(LINE_WIDTH);
         gc.setLineCap(StrokeLineCap.ROUND);
+        gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Delete
+        gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
         selectionCanvas.setLayoutX(WINDOW_SIZE);
         selectionCanvas.setLayoutY(WINDOW_SIZE);
-        selectionCanvas.setOnMouseDragEntered(new testDrag());
-        selectionCanvas.setOnKeyPressed(new KeyPressHandler());
 
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
@@ -97,15 +102,6 @@ public class View extends Application implements Observer {
         controller = new Controller(this);
     }
 
-    // TODO: Delete
-    private class testDrag implements EventHandler<MouseEvent> {
-
-        @Override
-        public void handle(MouseEvent mouseEvent) {
-            System.out.println("Here");
-        }
-    }
-
     @Override
     public void update(Observable o, Object piecesRaw) {
         assert piecesRaw instanceof Piece[];
@@ -114,16 +110,28 @@ public class View extends Application implements Observer {
 
         Piece[] pieces = (Piece[]) piecesRaw;
         Piece highlightedPiece = null;
+        boolean hasSelected = false;
         for (Piece piece : pieces) {
             if (piece.getHighlightState() == Piece.PieceState.NEUTRAL)
                 drawPiece(piece, mainCanvas);
-            else
+            else {
                 highlightedPiece = piece;
+                if (piece.isSelected())
+                    hasSelected = true;
+            }
         }
 
         if (highlightedPiece != null) {
-            drawPiece(highlightedPiece, mainCanvas);
-            scene.setCursor(Cursor.MOVE);
+            if (highlightedPiece.isSelected() && !previouslySelected) {
+                previouslySelected = true;
+                selectionCanvas.setLayoutX(0);
+                selectionCanvas.setLayoutY(0);
+                drawPiece(highlightedPiece, selectionCanvas);
+            }
+            else {
+                drawPiece(highlightedPiece, mainCanvas);
+                scene.setCursor(Cursor.MOVE);
+            }
         }
         else {
             scene.setCursor(Cursor.DEFAULT);
@@ -174,11 +182,11 @@ public class View extends Application implements Observer {
         @Override
         public void handle(MouseEvent mouseEvent) {
             if (mouseEvent.isPrimaryButtonDown()) {
-                initialCoordsX = mouseEvent.getSceneX();
-                initialCoordsY = mouseEvent.getSceneY();
+                initialMouseX = mouseEvent.getSceneX();
+                initialMouseY = mouseEvent.getSceneY();
 
-                double gridX = initialCoordsX / CELL_SIZE;
-                double gridY = initialCoordsY / CELL_SIZE;
+                double gridX = initialMouseX / CELL_SIZE;
+                double gridY = initialMouseY / CELL_SIZE;
                 controller.pluckPiece(gridX, gridY);
             }
         }
@@ -189,25 +197,32 @@ public class View extends Application implements Observer {
         @Override
         public void handle(MouseEvent mouseEvent) {
             if (controller.hasPieceSelected()) {
-                double gridX = mouseEvent.getSceneX() / CELL_SIZE;
-                double gridY = mouseEvent.getSceneY() / CELL_SIZE;
+                double mouseX = mouseEvent.getSceneX();
+                double mouseY = mouseEvent.getSceneY();
 
-                controller.updateSelectedPosition(gridX, gridY);
+                selectionCanvas.setLayoutX(mouseX - initialMouseX);
+                selectionCanvas.setLayoutY(mouseY - initialMouseY);
+                controller.updateSelectedPosition(mouseX / CELL_SIZE, mouseY / CELL_SIZE);
             }
         }
     }
 
-    // TODO: Implement
     private class MouseReleaseHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent mouseEvent) {
-            if (controller.hasPieceSelected()) {
+            if (previouslySelected) {
+                previouslySelected = false;
+                GraphicsContext gc = selectionCanvas.getGraphicsContext2D();
+                gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
+                gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Delete
+                gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
+                selectionCanvas.setLayoutX(WINDOW_SIZE);
+                selectionCanvas.setLayoutY(WINDOW_SIZE);
                 controller.placePiece();
             }
         }
     }
 
-    // TODO: Implement
     private class KeyPressHandler implements EventHandler<KeyEvent> {
         @Override
         public void handle(KeyEvent keyEvent) {

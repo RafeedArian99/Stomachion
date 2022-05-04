@@ -82,8 +82,8 @@ public class Model extends Observable {
 
 	public void updateSelectedPosition(double gridX, double gridY) {
 		selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
-		setChanged();
-		notifyObservers(this.mainBox.getList());
+//		setChanged();
+//		notifyObservers(this.mainBox.getList());
 	}
 
 	// plucking removes from the main box and puts into the selection box
