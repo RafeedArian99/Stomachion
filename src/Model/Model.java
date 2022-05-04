@@ -19,7 +19,7 @@ public class Model extends Observable {
 	
 	public Model(Observer observer) {
 		// TODO THIS DOES NOT NEED ANY ARGS NOW
-		this.mainBox = new BoundingBox(0, 0, 36, 36);
+		this.mainBox = new BoundingBox();
 
 		this.addObserver(observer);
 		setChanged();
