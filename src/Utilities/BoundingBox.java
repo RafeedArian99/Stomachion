@@ -85,8 +85,14 @@ public class BoundingBox {
 	
 	// this function will check if a piece is fully within the center board
 	public boolean encapsulatesCenter(Piece piece) {
-		
-		return false;
+		boolean checker = true;
+		double[][] coords = piece.getAllCoords(1);
+		for(int i = 0; i < 14; i++) {
+			if (!(coords[0][i] >= 12 && coords[0][i] <= 24 && coords[1][i] >= 12 && coords[1][i] <= 24)) {
+				checker = false;
+			}
+		}
+		return checker;
 	}
 	
 	// this function will check if a piece has ANY overlap with the center of the board

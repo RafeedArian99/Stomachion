@@ -8,6 +8,8 @@ import Utilities.Piece.PieceState;
 
 public class Model extends Observable {
 	
+	private boolean win = false;
+	
 	private BoundingBox mainBox;
 	
 	private boolean selectionHas;
@@ -24,6 +26,18 @@ public class Model extends Observable {
 		this.addObserver(observer);
 		setChanged();
 		notifyObservers(mainBox.getList());
+	}
+	
+	public boolean checkWin() {
+		boolean checker = true;
+		Piece[] pieces = this.mainBox.getList();
+		for (Piece piece : pieces) {
+			if (!(this.mainBox.encapsulatesCenter(piece))) {
+				checker = false;
+			}
+		}
+		this.win = checker;
+		return this.win;
 	}
 	
     @SuppressWarnings("deprecation")
