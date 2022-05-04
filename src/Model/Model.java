@@ -28,6 +28,18 @@ public class Model extends Observable {
 		notifyObservers(mainBox.getList());
 	}
 	
+	public boolean checkWin() {
+		boolean checker = true;
+		Piece[] pieces = this.mainBox.getList();
+		for (Piece piece : pieces) {
+			if (!(this.mainBox.encapsulatesCenter(piece))) {
+				checker = false;
+			}
+		}
+		this.win = checker;
+		return this.win;
+	}
+	
     @SuppressWarnings("deprecation")
 	public void pluckPiece(double gridX, double gridY) {
     	Piece[] array = this.mainBox.getList();
