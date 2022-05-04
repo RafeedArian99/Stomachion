@@ -29,6 +29,7 @@ public class BoundingBox {
 
 		this.pieceList = new Piece[14];
 		for (int i = 0; i < 14; i++) {
+			//System.out.println("for1");
 			Piece newPiece = new Piece(i, colors.remove((int) (Math.random() * (14 - i))));
 			
 			int rotate = (int)(Math.random() * 4);
@@ -41,7 +42,8 @@ public class BoundingBox {
 			}
 			
 			int counter = 0;
-			while (counter < 1) {
+			while (counter < 100) {
+				//System.out.println("while1");
 				newPiece.resetGlobalOffset();
 				int x = (int)(Math.random() * 36);
 				int y = (int)(Math.random() * 36);
@@ -51,13 +53,15 @@ public class BoundingBox {
 					checker = true;
 				}
 				for (int j = 0; j < i; j++) {
+					//System.out.println("for2");
 					if (newPiece.collidesWith(pieceList[j])) {
 						checker = true;
 					}
 				}
 				if (checker == false) {
-					counter++;
+					counter = 100;
 				}
+				counter++;
 			}
 			
 			pieceList[i] = newPiece;
@@ -80,12 +84,15 @@ public class BoundingBox {
 	public boolean encapsulates(Piece piece) {
 		double[][] pieceCoords = piece.getAllCoords(1);
 		for (int i = 0; i < pieceCoords[0].length; i++) {
+			//System.out.println("for3");
 			if (pieceCoords[0][i] > 12 && pieceCoords[0][i] < 24 && pieceCoords[1][i] > 12 && pieceCoords[1][i] < 24 ) {
 				return false;
 			}
 		}
 		for (double[] row : pieceCoords) {
+			//System.out.println("for4");
 			for (double num : row) {
+				//System.out.println("for5");
 				if (num < 0 || num >= 36) {
 					return false;
 				}
