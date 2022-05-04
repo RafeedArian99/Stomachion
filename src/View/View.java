@@ -1,13 +1,17 @@
 package View;
 
 import Utilities.Piece;
+import javafx.animation.RotateTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -15,11 +19,13 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.stage.Stage;
 
 import Controller.Controller;
+import javafx.util.Duration;
 
 import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application implements Observer {
+    // Variables with multiple access points
     private Controller controller;
     private Canvas mainCanvas;
     private Scene scene;
@@ -28,6 +34,16 @@ public class View extends Application implements Observer {
     private Canvas selectionCanvas;
     private double initialMouseX, initialMouseY;
     private boolean previouslySelected;
+
+    // Animation variables and settings
+    private RotateTransition rotateTransition, counterclockwiseRotateTransition;
+    private ScaleTransition scaleTransition;
+//    private RotateTransition verticalFlipTransition, horizontalFlipTransition;
+    private static final double ANIMATION_DURATION = 100;
+    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
+    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
+    private static final KeyCode VERTICAL_FLIP_KEY = KeyCode.W;
+    private static final KeyCode HORIZONTAL_FLIP_KEY = KeyCode.S;
 
     // Window settings
     private static final double CELL_SIZE = 25;
@@ -54,10 +70,9 @@ public class View extends Application implements Observer {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Stomachion");
-
-        // Initialize all canvasses
         GraphicsContext gc;
 
+        // Main canvas
         mainCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = mainCanvas.getGraphicsContext2D();
         gc.setLineWidth(LINE_WIDTH);
@@ -65,6 +80,7 @@ public class View extends Application implements Observer {
         mainCanvas.setOnMousePressed(new MousePressHandler());
         mainCanvas.setOnMouseMoved(new MouseMoveHandler());
 
+        // Selection canvas
         selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = selectionCanvas.getGraphicsContext2D();
         gc.setLineWidth(LINE_WIDTH);
@@ -73,6 +89,20 @@ public class View extends Application implements Observer {
         gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
         selectionCanvas.setLayoutX(WINDOW_SIZE);
         selectionCanvas.setLayoutY(WINDOW_SIZE);
+
+        // Animations
+        rotateTransition = new RotateTransition();
+        rotateTransition.setDuration(Duration.millis(ANIMATION_DURATION));
+        rotateTransition.setNode(selectionCanvas);
+
+        scaleTransition = new ScaleTransition();
+        scaleTransition.setDuration(Duration.millis(ANIMATION_DURATION));
+        scaleTransition.setNode(selectionCanvas);
+
+//        counterclockwiseRotateTransition = new RotateTransition();
+//        counterclockwiseRotateTransition.setDuration(Duration.millis(ANIMATION_DURATION));
+//        counterclockwiseRotateTransition.setNode(selectionCanvas);
+//        counterclockwiseRotateTransition.setByAngle(-90);
 
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
@@ -95,6 +125,7 @@ public class View extends Application implements Observer {
         scene.setFill(BG_COLOR);
         scene.setOnMouseDragged(new MouseDragHandler());
         scene.setOnMouseReleased(new MouseReleaseHandler());
+        scene.setOnKeyPressed(new KeyPressHandler());
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
@@ -110,26 +141,23 @@ public class View extends Application implements Observer {
 
         Piece[] pieces = (Piece[]) piecesRaw;
         Piece highlightedPiece = null;
-        boolean hasSelected = false;
         for (Piece piece : pieces) {
             if (piece.getHighlightState() == Piece.PieceState.NEUTRAL)
-                drawPiece(piece, mainCanvas);
+                drawPiece(piece, mainCanvas, 0, 0);
             else {
                 highlightedPiece = piece;
-                if (piece.isSelected())
-                    hasSelected = true;
             }
         }
 
         if (highlightedPiece != null) {
             if (highlightedPiece.isSelected() && !previouslySelected) {
                 previouslySelected = true;
-                selectionCanvas.setLayoutX(0);
-                selectionCanvas.setLayoutY(0);
-                drawPiece(highlightedPiece, selectionCanvas);
+                selectionCanvas.setLayoutX(initialMouseX - WINDOW_SIZE / 2);
+                selectionCanvas.setLayoutY(initialMouseY - WINDOW_SIZE / 2);
+                drawPiece(highlightedPiece, selectionCanvas, WINDOW_SIZE / 2 - initialMouseX, WINDOW_SIZE / 2 - initialMouseY);
             }
             else {
-                drawPiece(highlightedPiece, mainCanvas);
+                drawPiece(highlightedPiece, mainCanvas, 0, 0);
                 scene.setCursor(Cursor.MOVE);
             }
         }
@@ -138,10 +166,18 @@ public class View extends Application implements Observer {
         }
     }
 
-    private void drawPiece(Piece piece, Canvas canvas) {
-        double[][] allCoords = piece.getAllCoords(CELL_SIZE);
+    private void drawPiece(Piece piece, Canvas canvas, double offsetX, double offsetY) {
+        double[][] allCoords = piece.getAllCoords();
+
         double[] xCoords = allCoords[0];
+        for (int i = 0; i < xCoords.length; i++)
+            xCoords[i] = xCoords[i] * CELL_SIZE + offsetX;
+
         double[] yCoords = allCoords[1];
+        for (int i = 0; i < yCoords.length; i++) {
+            yCoords[i] = yCoords[i] * CELL_SIZE + offsetY;
+        }
+
 
         // Fill piece
         GraphicsContext gc = canvas.getGraphicsContext2D();
@@ -168,7 +204,6 @@ public class View extends Application implements Observer {
         }
     }
 
-    // TODO: Implement
     private class MouseMoveHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent mouseEvent) {
@@ -200,8 +235,11 @@ public class View extends Application implements Observer {
                 double mouseX = mouseEvent.getSceneX();
                 double mouseY = mouseEvent.getSceneY();
 
-                selectionCanvas.setLayoutX(mouseX - initialMouseX);
-                selectionCanvas.setLayoutY(mouseY - initialMouseY);
+                selectionCanvas.setLayoutX(mouseX - WINDOW_SIZE / 2);
+                selectionCanvas.setLayoutY(mouseY - WINDOW_SIZE / 2);
+                KeyPressHandler kps = (KeyPressHandler) scene.getOnKeyPressed();
+                kps.mouseX = mouseX;
+                kps.mouseY = mouseY;
                 controller.updateSelectedPosition(mouseX / CELL_SIZE, mouseY / CELL_SIZE);
             }
         }
@@ -212,21 +250,68 @@ public class View extends Application implements Observer {
         public void handle(MouseEvent mouseEvent) {
             if (previouslySelected) {
                 previouslySelected = false;
+                selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+                ((Group) scene.getRoot()).getChildren().set(2, selectionCanvas);
                 GraphicsContext gc = selectionCanvas.getGraphicsContext2D();
-                gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
+//                gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
                 gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Delete
                 gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
                 selectionCanvas.setLayoutX(WINDOW_SIZE);
                 selectionCanvas.setLayoutY(WINDOW_SIZE);
+                rotateTransition.setNode(selectionCanvas);
+                scaleTransition.setNode(selectionCanvas);
                 controller.placePiece();
             }
         }
     }
 
     private class KeyPressHandler implements EventHandler<KeyEvent> {
+        public double mouseX, mouseY;
+
+        private double upX = 0, upY = -2;
+
         @Override
         public void handle(KeyEvent keyEvent) {
-            System.out.println("Here: " + ((Canvas) keyEvent.getSource()).getLayoutBounds());
+            if (keyEvent.getCode() == CLOCKWISE_ROTATE_KEY) {
+                rotateTransition.setByAngle(90);
+                rotateTransition.setAxis(new Point3D(0, 0, 1));
+                rotateTransition.play();
+
+                double temp = upX;
+                upX = -upY;
+                upY = temp;
+
+                controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.CLOCKWISE);
+            }
+            else if (keyEvent.getCode() == COUNTERCLOCKWISE_ROTATE_KEY) {
+                rotateTransition.setByAngle(-90);
+                rotateTransition.setAxis(new Point3D(0, 0, 1));
+                rotateTransition.play();
+
+                double temp = upX;
+                upX = upY;
+                upY = -temp;
+
+                controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.COUNTERCLOCKWISE);
+            }
+            else if (keyEvent.getCode() == VERTICAL_FLIP_KEY) {
+                scaleTransition.setByX(upX);
+                scaleTransition.setByY(upY);
+                scaleTransition.play();
+
+                upX = -upX;
+                upY = -upY;
+
+                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.VERTICAL);
+            }
+//            else if (keyEvent.getCode() == HORIZONTAL_FLIP_KEY) {
+//                rotateTransition.setByAngle(180);
+//                rotateTransition.setAxis(new Point3D(0, 1, 0));
+//                rotateTransition.play();
+//                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.HORIZONTAL);
+//            }
+
+            System.out.println(upX + ", " + upY);
         }
     }
 }
