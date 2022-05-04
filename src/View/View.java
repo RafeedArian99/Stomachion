@@ -3,14 +3,23 @@ package View;
 import Utilities.Piece;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import Controller.Controller;
@@ -38,13 +47,39 @@ public class View extends Application implements Observer {
     // TODO: Delete these variables
     Piece[] pieces;
 
-    public static void main(String args) {
+    public static void main(String[] args) {
         launch(args);
     }
-
+    
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Stomachion");
+    	stage.setTitle("Stomachion");
+    	Group root = new Group();
+    	int red = (int) (Math.random()*(255/2));
+    	int green = (int) (Math.random()*(255/2));
+    	int blue = (int) (Math.random()*(255/2));
+    	Scene scene = new Scene(root, WINDOW_SIZE, WINDOW_SIZE, Color.rgb(red, green, blue));
+    	Text text = new Text(20, 150, "Stomachion");
+    	Button startButton = new Button("Start Game");
+    	text.setFont(Font.font("Serif", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 75));
+    	text.setFill(Color.LIGHTGRAY);
+    	text.relocate(160, 200);
+    	startButton.relocate(250, WINDOW_SIZE/2);
+    	startButton.setPrefSize(200, 100);
+    	startButton.setFont(Font.font("Serif", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 25));
+    	startButton.setTextFill(Color.BLUE);
+    	root.getChildren().add(text);
+    	root.getChildren().add(startButton);	
+		startButton.setOnAction((event) -> { 
+			startGame(stage);
+		});
+		stage.setScene(scene);
+		stage.show();
+        
+    }
+    
+    public void startGame(Stage stage) {
+    	stage.setTitle("Stomachion");
 
         // Initialize all canvasses
         GraphicsContext gc;
