@@ -1,3 +1,10 @@
+/*
+ * Name: BoundingBox.java
+ * 
+ * Purpose: This contains the pieces, places them, and has methods related to the board.
+ * 
+ * Author: Joshua Klein, CSC335
+ */
 
 package Utilities;
 
@@ -9,16 +16,14 @@ import javafx.scene.image.Image;
 
 public class BoundingBox {
 	
+	// The pieces for the game
 	private Piece[] pieceList;
 	
-	private Vertex globalOffset;
-	
-	private double width;
-	
-	private double height;
-	
-	// TODO THIS DOES NOT NEED ANY ARGS NOW
-	public BoundingBox(double x1, double y1, double width, double height) {
+	/**
+	 * Creates the bounding box and places all of the shapes with random positions,
+	 * colors, and orientations.
+	 */
+	public BoundingBox() {
 		Image texturePack = new Image("/Textures/final-14-1x.png");
 		PixelReader pixelReader = texturePack.getPixelReader();
 
@@ -66,21 +71,39 @@ public class BoundingBox {
 			
 			pieceList[i] = newPiece;
 		}
-		this.globalOffset = new Vertex(x1, y1);
-		this.width = width;
-		this.height = height;
 	}
 	
+	/**
+	 * 
+	 * Returns the list of puzzle pieces
+	 * 
+	 * @return an array of pieces
+	 */
 	public Piece[] getList() {
 		return pieceList;
 	}
 	
-	// this function will check if a piece is in the center board
+	// this function will check if a piece is fully within the center board
 	public boolean encapsulatesCenter(Piece piece) {
 		
 		return false;
 	}
 	
+	// this function will check if a piece has ANY overlap with the center of the board
+	public boolean overlapCenter(Piece piece) {
+		
+		return false;
+	}
+	
+	/**
+	 * 
+	 * This function checks if the board properly contains a piece
+	 * it should be fully within the board but outside of the center
+	 * square
+	 * 
+	 * @param a piece
+	 * @return whether the piece is properly contained
+	 */
 	public boolean encapsulates(Piece piece) {
 		double[][] pieceCoords = piece.getAllCoords(1);
 		for (int i = 0; i < pieceCoords[0].length; i++) {
@@ -114,6 +137,12 @@ public class BoundingBox {
 		return true;
 	}
 	
+	/**
+	 * Compares the bounding box to another bounding box object
+	 * 
+	 * @param another bounding box
+	 * @return true if they are the same
+	 */
 	public boolean equals(BoundingBox otherBox) {
 		boolean check = true;
 		for (int i = 0; i < 14; i++) {
