@@ -85,9 +85,22 @@ public class BoundingBox {
 		double[][] pieceCoords = piece.getAllCoords(1);
 		for (int i = 0; i < pieceCoords[0].length; i++) {
 			//System.out.println("for3");
+			
+			
+			
+			// FIX THIS: RN THIS JUST MAKES THE INNER BOX CHECK FOR VERTEX RATHER THAN EDGE COLLISIONS
+			
+			
+			
 			if (pieceCoords[0][i] > 12 && pieceCoords[0][i] < 24 && pieceCoords[1][i] > 12 && pieceCoords[1][i] < 24 ) {
 				return false;
 			}
+			
+			
+			
+			
+			
+			
 		}
 		for (double[] row : pieceCoords) {
 			//System.out.println("for4");

@@ -121,6 +121,13 @@ public class Piece {
      * @return true if this piece is colliding with another one
      */
     public boolean collidesWith(Piece other) {
+    	
+    	
+    	
+    	// FIX THIS: IT IS CURRENTLY PRETTY BASIC AND ONLY CHECKS VERTICES RATHER THAN EDGES
+    	
+    	
+    	
         for (Edge localEdge : localEdges) {
         	//System.out.println("khehc");
             if (other.encapsulates(localEdge.start)) {
