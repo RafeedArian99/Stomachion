@@ -5,7 +5,9 @@ import javafx.animation.RotateTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -18,6 +20,8 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
@@ -39,6 +43,7 @@ public class View extends Application implements Observer {
     private Canvas mainCanvas;
     private Scene scene;
     private static String textureChosen;
+    private Text text;
 
     // Selection Canvas variables
     private Canvas selectionCanvas;
@@ -137,7 +142,6 @@ public class View extends Application implements Observer {
     }
 
     public void startGame(Stage stage) {
-        System.out.println("Herer");
         stage.setTitle("Stomachion");
         GraphicsContext gc;
 
@@ -166,6 +170,7 @@ public class View extends Application implements Observer {
         scaleTransition.setDuration(Duration.millis(ANIMATION_DURATION));
         scaleTransition.setNode(selectionCanvas);
 
+        // Display the dots
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
         gc.setFill(FG_COLOR);
@@ -182,7 +187,15 @@ public class View extends Application implements Observer {
 
         // Show initial setup
         Group group = new Group();
-        group.getChildren().addAll(gridCanvas, mainCanvas, selectionCanvas);
+        text = new Text();
+        text.setFont(Font.font("Consolas", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 50));
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.TOP_CENTER);
+        vBox.setMinWidth(WINDOW_SIZE);
+        vBox.getChildren().addAll(text);
+        int inset = 50;
+        vBox.setPadding(new Insets(inset, inset, inset, inset));
+        group.getChildren().addAll(gridCanvas, vBox, mainCanvas, selectionCanvas);
         scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
         scene.setFill(BG_COLOR);
         scene.setOnMouseDragged(new MouseDragHandler());
@@ -236,6 +249,10 @@ public class View extends Application implements Observer {
         else {
             scene.setCursor(Cursor.DEFAULT);
         }
+
+        if (controller != null) {
+            text.setText(controller.checkWin() ? "You found a solution!" : "");
+        }
     }
 
     private void drawPiece(Piece piece, Canvas canvas, double offsetX, double offsetY) {
@@ -261,8 +278,7 @@ public class View extends Application implements Observer {
         switch (piece.getHighlightState()) {
             case VALID:
                 if (canvas == mainCanvas && piece.isSelected())
-                    System.out.println("Here");
-                gc.setStroke(VALID_LINE_COLOR);
+                    gc.setStroke(VALID_LINE_COLOR);
                 break;
             case INVALID:
                 gc.setStroke(INVALID_LINE_COLOR);
@@ -335,7 +351,7 @@ public class View extends Application implements Observer {
                 selectionCanvas.setLayoutX(WINDOW_SIZE);
                 selectionCanvas.setLayoutY(WINDOW_SIZE);
 
-                ((Group) scene.getRoot()).getChildren().set(2, selectionCanvas);
+                ((Group) scene.getRoot()).getChildren().set(3, selectionCanvas);
                 rotateTransition.setNode(selectionCanvas);
                 scaleTransition.setNode(selectionCanvas);
 

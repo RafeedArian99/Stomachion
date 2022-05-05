@@ -43,4 +43,8 @@ public class Controller {
     public void flipAbout(double x, double y, boolean dir) {
         model.flipAbout(x, y, dir);
     }
+
+    public boolean checkWin() {
+        return model.checkWin();
+    }
 }
