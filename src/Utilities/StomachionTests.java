@@ -20,6 +20,9 @@ class StomachionTests {
 
 	@SuppressWarnings("unused")
 	@Test
+	/**
+	 * This test checks that we can actually create a Controller and update the model inside it.
+	 */
 	void testAddObserverToModel() {
 		int[] a = {999};
 		ArrayList<int[]> textures = new ArrayList<>();
@@ -45,14 +48,15 @@ class StomachionTests {
 			//bb
 		}, textures);
 
-		//controller.pluckPiece(-1, -1);
 		assertFalse(controller.checkWin());
-		//controller.pluckPiece(piece[0].getGlobalX(), piece[0].getGlobalY());
-		//assertTrue(controller.hasPieceSelected());
 	
 	}
 
 	@Test
+	/**
+	 * This test attempts to pick up a piece. Creates a dummy piece and uses its
+	 * coordinates as parameters for the controller to pick up the piece.
+	 */
 	void testPluckPiece() {
 
 		Piece[] piece = new Piece[1];
@@ -70,6 +74,10 @@ class StomachionTests {
 	}
 	
 	@Test
+	/**
+	 * This test creates a dummy Piece and Controller, updates it using the observable interface,
+	 * selects the Piece, and highlights it, then checks that the state was updated to be highlighted. 
+	 */
 	void testHighlight() {
 		Piece[] piece = new Piece[1];
 		ArrayList<int[]> textures = new ArrayList<>();
@@ -86,6 +94,10 @@ class StomachionTests {
 	}
 	
 	@Test
+	/**
+	 * This test creates a new Controller and checks that a piece is not selected
+	 * on initialization of the Controller.
+	 */
 	void testPieceSelectedFalseOnInit() {
 		int[] a = {999};
 		ArrayList<int[]> textures = new ArrayList<>();
