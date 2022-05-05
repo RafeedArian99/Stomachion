@@ -2,6 +2,7 @@ package Controller;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.Observer;
 
 import org.junit.jupiter.api.Test;
@@ -13,7 +14,12 @@ class StomachionTests {
 	@Test
 	void testAddObserverToModel() {
 		final int[] a = {999};
-        Controller controller = new Controller((observable, obj) -> a[0] = 444, "");
+
+		ArrayList<int[]> textures = new ArrayList<>();
+		for (int i = 0; i < 14; i++)
+			textures.add(new int[3]);
+
+        Controller controller = new Controller((observable, obj) -> a[0] = 444, textures);
         System.out.println();
         assertEquals(a[0], 444);	
     }

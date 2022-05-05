@@ -1,5 +1,6 @@
 package Model;
 
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -19,7 +20,7 @@ public class Model extends Observable {
 	private double selectedInitialX, selectedInitialY;
 	private double selectedGlobalX, selectedGlobalY;
 	
-	public Model(Observer observer, String textures) {
+	public Model(Observer observer, ArrayList<int[]> textures) {
 		// TODO THIS DOES NOT NEED ANY ARGS NOW
 		this.mainBox = new BoundingBox(textures);
 
