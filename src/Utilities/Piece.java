@@ -8,7 +8,7 @@ public class Piece {
     public static final boolean CLOCKWISE = true;
     public static final boolean COUNTERCLOCKWISE = false;
 
-    private final Vertex globalOffset;
+    private Vertex globalOffset;
     private final Edge[] localEdges;
     private final int pieceID;
     private int rotation;
@@ -46,6 +46,7 @@ public class Piece {
                 {{0, 0}, {-6, 3}, {-4, 4}},                 // (11) Small Dagger (6)
                 {{0, 0}, {-1, 4}, {0, 6}},                  // (12) Small Icicle (3)
                 {{0, 0}, {-3, 2}, {0, 2}},                   // (13) Small Ramp (3)
+                {{0, 0}, {0, 12}, {12, 12}, {12, 0}}
         };
         double[][] vertices = allVertices[pieceID];
 
@@ -121,13 +122,30 @@ public class Piece {
      * @return true if this piece is colliding with another one
      */
     public boolean collidesWith(Piece other) {
+    	
+    	
+    	
+    	// FIX THIS: IT IS CURRENTLY PRETTY BASIC AND ONLY CHECKS VERTICES RATHER THAN EDGES
+    	
+    	
+    	
         for (Edge localEdge : localEdges) {
+        	//System.out.println("khehc");
             if (other.encapsulates(localEdge.start)) {
                 return true;
             }
         }
-
+        for (Edge otherEdge : other.getEdges()) {
+        	//System.out.println("check");
+            if (this.encapsulates(otherEdge.start)) {
+                return true;
+            }
+        }
         return false;
+    }
+    
+    public Edge[] getEdges() {
+    	return localEdges;
     }
 
     /**
@@ -210,6 +228,10 @@ public class Piece {
         return this.encapsulates(new Vertex(x, y));
     }
 
+    public void resetGlobalOffset() {
+    	this.globalOffset = new Vertex(0, 0);
+    }
+    
     /* Private functions */
 
     private boolean encapsulates(Vertex v) {
@@ -224,4 +246,5 @@ public class Piece {
 
         return downCount == 1 && upCount == 1;
     }
+    
 }

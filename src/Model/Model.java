@@ -7,24 +7,38 @@ import Utilities.*;
 import Utilities.Piece.PieceState;
 
 public class Model extends Observable {
+	
+	private boolean win = false;
+	
+	private BoundingBox mainBox;
+	
+	private boolean selectionHas;
+	
+	private Piece selected;
 
-    private BoundingBox mainBox;
+	private double selectedInitialX, selectedInitialY;
+	private double selectedGlobalX, selectedGlobalY;
+	
+	public Model(Observer observer) {
+		// TODO THIS DOES NOT NEED ANY ARGS NOW
+		this.mainBox = new BoundingBox();
 
-    private boolean selectionHas;
-
-    private Piece selected;
-
-    private double selectedInitialX, selectedInitialY;
-    private double selectedGlobalX, selectedGlobalY;
-
-    public Model(Observer observer) {
-        // TODO THIS DOES NOT NEED ANY ARGS NOW
-        this.mainBox = new BoundingBox(0, 0, 36, 36);
-
-        this.addObserver(observer);
-        setChanged();
-        notifyObservers(mainBox.getList());
-    }
+		this.addObserver(observer);
+		setChanged();
+		notifyObservers(mainBox.getList());
+	}
+	
+	public boolean checkWin() {
+		boolean checker = true;
+		Piece[] pieces = this.mainBox.getList();
+		for (Piece piece : pieces) {
+			if (!(this.mainBox.encapsulatesCenter(piece))) {
+				checker = false;
+			}
+		}
+		this.win = checker;
+		return this.win;
+	}
 
     @SuppressWarnings("deprecation")
     public void pluckPiece(double gridX, double gridY) {
@@ -82,8 +96,6 @@ public class Model extends Observable {
 
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
-//		setChanged();
-//		notifyObservers(this.mainBox.getList());
     }
 
     public void rotateAbout(double x, double y, boolean dir) {
@@ -108,5 +120,4 @@ public class Model extends Observable {
 
     // plucking removes from the main box and puts into the selection box
     // placing removes form the selection box and places in the man box.private BoundingBox mainBox;private BoundingBox mainBox;private BoundingBox mainBox;
-
 }
