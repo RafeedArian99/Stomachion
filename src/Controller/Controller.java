@@ -7,8 +7,8 @@ import java.util.Observer;
 public class Controller {
     private final Model model;
 
-    public Controller(Observer observer) {
-        model = new Model(observer);
+    public Controller(Observer observer, String textures) {
+        model = new Model(observer, textures);
     }
 
     public void pluckPiece(double gridX, double gridY) {

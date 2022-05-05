@@ -19,9 +19,9 @@ public class Model extends Observable {
 	private double selectedInitialX, selectedInitialY;
 	private double selectedGlobalX, selectedGlobalY;
 	
-	public Model(Observer observer) {
+	public Model(Observer observer, String textures) {
 		// TODO THIS DOES NOT NEED ANY ARGS NOW
-		this.mainBox = new BoundingBox();
+		this.mainBox = new BoundingBox(textures);
 
 		this.addObserver(observer);
 		setChanged();
