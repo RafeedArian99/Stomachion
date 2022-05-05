@@ -275,10 +275,8 @@ public class View extends Application implements Observer {
     }
 
     private class KeyPressHandler implements EventHandler<KeyEvent> {
-
         private double mouseX, mouseY;
         private double flipX = -2, flipY = -2;
-
         private boolean horizontal = false;
 
         @Override
