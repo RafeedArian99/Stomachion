@@ -36,6 +36,7 @@ public class View extends Application implements Observer {
     private Controller controller;
     private Canvas mainCanvas;
     private Scene scene;
+    private static String textureChosen;
 
     // Selection Canvas variables
     private Canvas selectionCanvas;
@@ -73,6 +74,7 @@ public class View extends Application implements Observer {
     @Override
     public void start(Stage stage) throws Exception {
     	stage.setTitle("Stomachion");
+    	textureChosen = "final-14-1x.png";
     	Group root = new Group();
     	int red = (int) (Math.random()*(255/2));
     	int green = (int) (Math.random()*(255/2));
@@ -118,15 +120,15 @@ public class View extends Application implements Observer {
 		});
 		texture1.setOnAction((event) -> { 
 			textureSelect.setText("Texture 1 Selected");
-//			textureChosen = "final-14-1x.png";
+			textureChosen = "final-14-1x.png";
 		});
 		texture2.setOnAction((event) -> { 
 			textureSelect.setText("Texture 2 Selected");
-//			textureChosen = "blues-14-1x.png";
+			textureChosen = "blues-14-1x.png";
 		});
 		texture3.setOnAction((event) -> { 
 			textureSelect.setText("Texture 3 Selected");
-//			textureChosen = "uofa_colors-14-1x.png";
+			textureChosen = "uofa_colors-14-1x.png";
 		});
 		stage.setScene(scene);
 		stage.show();
@@ -186,7 +188,7 @@ public class View extends Application implements Observer {
         stage.setResizable(false);
         stage.show();
 
-        controller = new Controller(this);
+        controller = new Controller(this, textureChosen);
     }
 
     @Override
