@@ -23,19 +23,14 @@ public class BoundingBox {
 	 * Creates the bounding box and places all of the shapes with random positions,
 	 * colors, and orientations.
 	 */
-	public BoundingBox() {
-		Image texturePack = new Image("/Textures/final-14-1x.png");
-		PixelReader pixelReader = texturePack.getPixelReader();
-
-		ArrayList<Color> colors = new ArrayList<>();
-		for (int i = 0; i < 14; i++) {
-			colors.add(pixelReader.getColor(i, 0));
-		}
+	public BoundingBox(ArrayList<int[]> textures) {
+//		Image texturePack = new Image("/Textures/" + textures);
+//		PixelReader pixelReader = texturePack.getPixelReader();
 
 		this.pieceList = new Piece[14];
 		for (int i = 0; i < 14; i++) {
 			//System.out.println("for1");
-			Piece newPiece = new Piece(i, colors.remove((int) (Math.random() * (14 - i))));
+			Piece newPiece = new Piece(i, textures.remove((int) (Math.random() * (14 - i))));
 			
 			int rotate = (int)(Math.random() * 4);
 			int flip = (int)(Math.random() * 2);
