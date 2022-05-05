@@ -47,8 +47,8 @@ public class View extends Application implements Observer {
     private RotateTransition rotateTransition;
     private ScaleTransition scaleTransition;
     private static final double ANIMATION_DURATION = 100;
-    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
-    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
+    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.E;
+    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.Q;
     private static final KeyCode VERTICAL_FLIP_KEY = KeyCode.W;
     private static final KeyCode HORIZONTAL_FLIP_KEY = KeyCode.S;
 
@@ -187,7 +187,6 @@ public class View extends Application implements Observer {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-
         controller = new Controller(this, textureChosen);
     }
 
