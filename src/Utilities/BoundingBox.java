@@ -23,8 +23,8 @@ public class BoundingBox {
 	 * Creates the bounding box and places all of the shapes with random positions,
 	 * colors, and orientations.
 	 */
-	public BoundingBox() {
-		Image texturePack = new Image("/Textures/final-14-1x.png");
+	public BoundingBox(String textures) {
+		Image texturePack = new Image("/Textures/" + textures);
 		PixelReader pixelReader = texturePack.getPixelReader();
 
 		ArrayList<Color> colors = new ArrayList<>();
@@ -86,7 +86,7 @@ public class BoundingBox {
 	// this function will check if a piece is fully within the center board
 	public boolean encapsulatesCenter(Piece piece) {
 		boolean checker = true;
-		double[][] coords = piece.getAllCoords(1);
+		double[][] coords = piece.getAllCoords();
 		for(int i = 0; i < 14; i++) {
 			if (!(coords[0][i] >= 12 && coords[0][i] <= 24 && coords[1][i] >= 12 && coords[1][i] <= 24)) {
 				checker = false;
@@ -106,12 +106,11 @@ public class BoundingBox {
 	 * This function checks if the board properly contains a piece
 	 * it should be fully within the board but outside of the center
 	 * square
-	 * 
-	 * @param a piece
+	 *
 	 * @return whether the piece is properly contained
 	 */
 	public boolean encapsulates(Piece piece) {
-		double[][] pieceCoords = piece.getAllCoords(1);
+		double[][] pieceCoords = piece.getAllCoords();
 		for (int i = 0; i < pieceCoords[0].length; i++) {
 			//System.out.println("for3");
 			
@@ -145,8 +144,7 @@ public class BoundingBox {
 	
 	/**
 	 * Compares the bounding box to another bounding box object
-	 * 
-	 * @param another bounding box
+	 *
 	 * @return true if they are the same
 	 */
 	public boolean equals(BoundingBox otherBox) {

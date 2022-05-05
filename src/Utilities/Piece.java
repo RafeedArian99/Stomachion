@@ -3,10 +3,10 @@ package Utilities;
 import javafx.scene.paint.Color;
 
 public class Piece {
-    public static final boolean VERTICAL_FLIP = true;
-    public static final boolean HORIZONTAL_FLIP = false;
+    public static final boolean VERTICAL = true;
+    public static final boolean HORIZONTAL = false;
     public static final boolean CLOCKWISE = true;
-    public static final boolean COUNTER_CLOCKWISE = false;
+    public static final boolean COUNTERCLOCKWISE = false;
 
     private Vertex globalOffset;
     private final Edge[] localEdges;
@@ -81,12 +81,12 @@ public class Piece {
         return this.highlighted;
     }
 
-    public double[][] getAllCoords(double cellSize) {
+    public double[][] getAllCoords() {
         double[][] allCoords = new double[2][localEdges.length];
         for (int i = 0; i < localEdges.length; i++) {
             Vertex globalVertex = localEdges[i].start.add(globalOffset);
-            allCoords[0][i] = globalVertex.getX() * cellSize;
-            allCoords[1][i] = globalVertex.getY() * cellSize;
+            allCoords[0][i] = globalVertex.getX();
+            allCoords[1][i] = globalVertex.getY();
         }
 
         return allCoords;
@@ -153,22 +153,22 @@ public class Piece {
      *
      * @param x           x-coordinate of rotation point
      * @param y           y-coordinate of rotation point
-     * @param isClockwise whether or not piece is to rotate clockwise or counter-clockwise
+     * @param dir whether or not piece is to rotate clockwise or counter-clockwise
      */
-    public void rotateAbout(double x, double y, boolean isClockwise) {
+    public void rotateAbout(double x, double y, boolean dir) {
         Vertex rotationPoint = new Vertex(x, y);
 
         Vertex adjustedOffset = globalOffset.add(rotationPoint.inverse());
-        adjustedOffset.rotate(isClockwise);
+        adjustedOffset.rotate(dir);
         adjustedOffset = adjustedOffset.add(rotationPoint);
         globalOffset.setX(adjustedOffset.getX());
         globalOffset.setY(adjustedOffset.getY());
 
         for (Edge localEdge : localEdges) {
-            localEdge.start.rotate(isClockwise);
+            localEdge.start.rotate(dir);
         }
 
-        rotation = Math.floorMod(rotation + (isClockwise ? 90 : -90), 360);
+        rotation = Math.floorMod(rotation + (dir ? 90 : -90), 360);
     }
 
     /**
@@ -176,17 +176,17 @@ public class Piece {
      *
      * @param x          x-coordinate of flip axis
      * @param y          y-coordinate of flip axis
-     * @param isVertical whether or not piece is to be flipped vertically or horizontally
+     * @param dir whether or not piece is to be flipped vertically or horizontally
      */
-    public void flipAbout(double x, double y, boolean isVertical) {
+    public void flipAbout(double x, double y, boolean dir) {
         for (Edge localEdge : localEdges) {
-            if (isVertical)
+            if (dir)
                 localEdge.start.setY(-localEdge.start.getY());
             else
                 localEdge.start.setX(-localEdge.start.getX());
         }
 
-        if (isVertical)
+        if (dir)
             globalOffset.setY(2 * y - globalOffset.getY());
         else
             globalOffset.setX(2 * x - globalOffset.getX());

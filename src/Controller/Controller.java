@@ -7,8 +7,8 @@ import java.util.Observer;
 public class Controller {
     private final Model model;
 
-    public Controller(Observer observer) {
-        model = new Model(observer);
+    public Controller(Observer observer, String textures) {
+        model = new Model(observer, textures);
     }
 
     public void pluckPiece(double gridX, double gridY) {
@@ -33,5 +33,13 @@ public class Controller {
 
     public void updateSelectedPosition(double gridX, double gridY) {
         model.updateSelectedPosition(gridX, gridY);
+    }
+
+    public void rotateAbout(double x, double y, boolean dir) {
+        model.rotateAbout(x, y, dir);
+    }
+
+    public void flipAbout(double x, double y, boolean dir) {
+        model.flipAbout(x, y, dir);
     }
 }
