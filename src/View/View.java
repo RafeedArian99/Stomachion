@@ -54,8 +54,8 @@ public class View extends Application implements Observer {
     private RotateTransition rotateTransition;
     private ScaleTransition scaleTransition;
     private static final double ANIMATION_DURATION = 100;
-    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.E;
-    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.Q;
+    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
+    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
     private static final KeyCode VERTICAL_FLIP_KEY = KeyCode.W;
     private static final KeyCode HORIZONTAL_FLIP_KEY = KeyCode.S;
 
@@ -285,8 +285,7 @@ public class View extends Application implements Observer {
         // Draw piece border
         switch (piece.getHighlightState()) {
             case VALID:
-                if (canvas == mainCanvas && piece.isSelected())
-                    gc.setStroke(VALID_LINE_COLOR);
+                gc.setStroke(VALID_LINE_COLOR);
                 break;
             case INVALID:
                 gc.setStroke(INVALID_LINE_COLOR);
@@ -375,28 +374,30 @@ public class View extends Application implements Observer {
 
         @Override
         public void handle(KeyEvent keyEvent) {
-            boolean clockwise, vertical;
-            if ((clockwise = keyEvent.getCode() == CLOCKWISE_ROTATE_KEY) || keyEvent.getCode() == COUNTERCLOCKWISE_ROTATE_KEY) {
-                rotateTransition.setByAngle(clockwise ? 90 : -90);
-                rotateTransition.play();
+            if (controller.hasPieceSelected()) {
+                boolean clockwise, vertical;
+                if ((clockwise = keyEvent.getCode() == CLOCKWISE_ROTATE_KEY) || keyEvent.getCode() == COUNTERCLOCKWISE_ROTATE_KEY) {
+                    rotateTransition.setByAngle(clockwise ? 90 : -90);
+                    rotateTransition.play();
 
-                horizontal = !horizontal;
-                controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, clockwise);
-            }
-            else if ((vertical = keyEvent.getCode() == VERTICAL_FLIP_KEY) || keyEvent.getCode() == HORIZONTAL_FLIP_KEY) {
-                if (vertical == horizontal) {
-                    scaleTransition.setByX(flipX);
-                    scaleTransition.setByY(0);
-                    flipX *= -1;
+                    horizontal = !horizontal;
+                    controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, clockwise);
                 }
-                else {
-                    scaleTransition.setByX(0);
-                    scaleTransition.setByY(flipY);
-                    flipY *= -1;
-                }
+                else if ((vertical = keyEvent.getCode() == VERTICAL_FLIP_KEY) || keyEvent.getCode() == HORIZONTAL_FLIP_KEY) {
+                    if (vertical == horizontal) {
+                        scaleTransition.setByX(flipX);
+                        scaleTransition.setByY(0);
+                        flipX *= -1;
+                    }
+                    else {
+                        scaleTransition.setByX(0);
+                        scaleTransition.setByY(flipY);
+                        flipY *= -1;
+                    }
 
-                scaleTransition.play();
-                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, vertical);
+                    scaleTransition.play();
+                    controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, vertical);
+                }
             }
         }
     }

@@ -15,9 +15,7 @@ import Utilities.Piece.PieceState;
 
 public class Model extends Observable {
 
-    private boolean win = false;
-
-    private BoundingBox mainBox;
+    private final BoundingBox mainBox;
 
     private boolean selectionHas;
 
@@ -27,11 +25,10 @@ public class Model extends Observable {
     private double selectedGlobalX, selectedGlobalY;
 
     /**
-     *
      * Constructs the model
      *
      * @param observer object
-     * @param an array of color sets
+     * @param textures list of colors (defined by int array of r,g,b).
      */
     public Model(Observer observer, ArrayList<int[]> textures) {
         // TODO THIS DOES NOT NEED ANY ARGS NOW
@@ -43,7 +40,6 @@ public class Model extends Observable {
     }
 
     /**
-     *
      * Checks if the game is won
      *
      * @return true if the game is won
@@ -58,16 +54,14 @@ public class Model extends Observable {
                 checker = false;
             }
         }
-        this.win = checker;
-        return this.win;
+        return checker;
     }
 
     /**
-     *
      * Picks up a piece
      *
-     * @param X coordinate
-     * @param Y coordinate
+     * @param gridX coordinate
+     * @param gridY coordinate
      */
     @SuppressWarnings("deprecation")
     public void pluckPiece(double gridX, double gridY) {
@@ -91,11 +85,10 @@ public class Model extends Observable {
     }
 
     /**
-     *
      * Highlights a piece
      *
-     * @param X coordinate
-     * @param Y coordinate
+     * @param gridX coordinate
+     * @param gridY coordinate
      */
     public void highlight(double gridX, double gridY) {
         Piece[] array = this.mainBox.getList();
@@ -115,7 +108,6 @@ public class Model extends Observable {
     }
 
     /**
-     *
      * Returns a boolean with whether a piece is selected
      *
      * @return true if a piece is selected
@@ -125,41 +117,38 @@ public class Model extends Observable {
     }
 
     /**
-     *
      * Places a piece
-     *
      */
     public void placePiece() {
         this.selected.setSelected(false);
         this.selectionHas = false;
         this.selected.snapGlobalOffset();
-        this.checkWin();
-        if (this.win == true) {
-            System.out.println("You Won!");
-        }
 
         setChanged();
         notifyObservers(this.mainBox.getList());
     }
 
     /**
-     *
      * Sets the offset of the selected piece while it is in motion
      *
-     * @param X coordinate
-     * @param Y coordinate
+     * @param gridX coordinate
+     * @param gridY coordinate
      */
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
+        for (Piece piece : mainBox.getList()) {
+            selected.highlight(piece != selected && piece.collidesWith(selected) ? PieceState.INVALID : PieceState.VALID);
+//            if (piece != selected && piece.collidesWith(selected))
+//                System.out.println("INVALID");
+        }
     }
 
     /**
-     *
      * Rotates a selected piece
      *
-     * @param X coordinate
-     * @param Y coordinate
-     * @param direction to rotate
+     * @param x   coordinate
+     * @param y   coordinate
+     * @param dir to rotate
      */
     public void rotateAbout(double x, double y, boolean dir) {
         if (this.selectionHas) {
@@ -172,12 +161,11 @@ public class Model extends Observable {
     }
 
     /**
-     *
      * Flips a selected piece
      *
-     * @param X coordinate
-     * @param Y coordinate
-     * @param direction to flip
+     * @param x   coordinate
+     * @param y   coordinate
+     * @param dir to flip
      */
     public void flipAbout(double x, double y, boolean dir) {
         if (this.selectionHas) {
@@ -187,5 +175,9 @@ public class Model extends Observable {
             selectedGlobalX = selected.getGlobalX();
             selectedGlobalY = selected.getGlobalY();
         }
+    }
+
+    public boolean checkPlacement(double gridX, double gridY) {
+        return false;
     }
 }
