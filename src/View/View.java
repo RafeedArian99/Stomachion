@@ -36,9 +36,8 @@ public class View extends Application implements Observer {
     private boolean previouslySelected;
 
     // Animation variables and settings
-    private RotateTransition rotateTransition, counterclockwiseRotateTransition;
+    private RotateTransition rotateTransition;
     private ScaleTransition scaleTransition;
-    //    private RotateTransition verticalFlipTransition, horizontalFlipTransition;
     private static final double ANIMATION_DURATION = 100;
     private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
     private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
@@ -59,9 +58,6 @@ public class View extends Application implements Observer {
     // Color settings
     private static final Color BG_COLOR = Color.grayRgb(230);
     private static final Color FG_COLOR = Color.WHITE;
-
-    // TODO: Delete these variables
-    Piece[] pieces;
 
     public static void main(String args) {
         launch(args);
@@ -85,8 +81,6 @@ public class View extends Application implements Observer {
         gc = selectionCanvas.getGraphicsContext2D();
         gc.setLineWidth(LINE_WIDTH);
         gc.setLineCap(StrokeLineCap.ROUND);
-        gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Delete
-        gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
         selectionCanvas.setLayoutX(WINDOW_SIZE);
         selectionCanvas.setLayoutY(WINDOW_SIZE);
 
@@ -98,11 +92,6 @@ public class View extends Application implements Observer {
         scaleTransition = new ScaleTransition();
         scaleTransition.setDuration(Duration.millis(ANIMATION_DURATION));
         scaleTransition.setNode(selectionCanvas);
-
-//        counterclockwiseRotateTransition = new RotateTransition();
-//        counterclockwiseRotateTransition.setDuration(Duration.millis(ANIMATION_DURATION));
-//        counterclockwiseRotateTransition.setNode(selectionCanvas);
-//        counterclockwiseRotateTransition.setByAngle(-90);
 
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
         gc = gridCanvas.getGraphicsContext2D();
@@ -260,8 +249,6 @@ public class View extends Application implements Observer {
 
                 selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
                 GraphicsContext gc = selectionCanvas.getGraphicsContext2D();
-                gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Delete
-                gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
                 selectionCanvas.setLayoutX(WINDOW_SIZE);
                 selectionCanvas.setLayoutY(WINDOW_SIZE);
 
