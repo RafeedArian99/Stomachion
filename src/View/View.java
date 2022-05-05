@@ -137,6 +137,7 @@ public class View extends Application implements Observer {
     }
 
     public void startGame(Stage stage) {
+        System.out.println("Herer");
         stage.setTitle("Stomachion");
         GraphicsContext gc;
 
@@ -191,12 +192,13 @@ public class View extends Application implements Observer {
         stage.setResizable(false);
         stage.show();
 
+        System.out.println(textureChosen);
         Image image = new Image("/Textures/" + textureChosen);
         PixelReader pixelReader = image.getPixelReader();
         ArrayList<int[]> textures = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
             Color color = pixelReader.getColor(i, 0);
-            textures.add(new int[]{(int) (color.getRed() * 256), (int) (color.getGreen() * 256), (int) (color.getBlue() * 256)});
+            textures.add(new int[]{(int) (color.getRed() * 255), (int) (color.getGreen() * 255), (int) (color.getBlue() * 255)});
         }
 
         controller = new Controller(this, textures);

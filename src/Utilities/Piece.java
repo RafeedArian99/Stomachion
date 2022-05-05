@@ -16,7 +16,7 @@ public class Piece {
 
     private boolean selected = false;
     private PieceState highlighted = PieceState.NEUTRAL;
-    private int[] color;
+    private final int[] color;
 
     public enum PieceState {
         NEUTRAL, VALID, INVALID
