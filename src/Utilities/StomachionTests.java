@@ -32,9 +32,22 @@ class StomachionTests {
 	void testCheckWin() {
 		
 	}
-	
+
+	@Test
 	void testPluckPiece() {
-		
+
+		Piece[] piece = new Piece[1];
+		ArrayList<int[]> textures = new ArrayList<>();
+		for (int i = 0; i < 14; i++)
+			textures.add(new int[3]);
+		Controller controller = new Controller((observable, obj) -> {
+			piece[0] = ((Piece[]) obj)[0];
+		}, textures);
+
+		controller.pluckPiece(-1, -1);
+		assertFalse(controller.hasPieceSelected());
+		controller.pluckPiece(piece[0].getGlobalX(), piece[0].getGlobalY());
+		assertTrue(controller.hasPieceSelected());
 	}
 	
 	void testHighlight() {
