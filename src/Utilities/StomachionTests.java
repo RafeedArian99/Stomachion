@@ -29,6 +29,10 @@ class StomachionTests {
         assertEquals(a[0], 444);	
     }
 	
+	void testCheckWin() {
+		
+	}
+	
 	void testPluckPiece() {
 		
 	}
@@ -37,12 +41,25 @@ class StomachionTests {
 		
 	}
 	
-	void testPieceSelectedTrue() {
-		
+	@Test
+	void testPieceSelectedFalseOnInit() {
+		int[] a = {999};
+		ArrayList<int[]> textures = new ArrayList<>();
+		for (int i = 0; i < 14; i++)
+			textures.add(new int[3]);
+        Controller controller = new Controller((observable, obj) -> a[0] = 444, textures);
+        
+        assertFalse(controller.hasPieceSelected());
 	}
 	
-	void testPieceSelectedFalse() {
-		
+	void testPieceSelectedTrue() {
+		int[] a = {999};
+		ArrayList<int[]> textures = new ArrayList<>();
+		for (int i = 0; i < 14; i++)
+			textures.add(new int[3]);
+        Controller controller = new Controller((observable, obj) -> a[0] = 444, textures);
+        controller.pluckPiece(0,0);
+        assertFalse(controller.hasPieceSelected());
 	}
 	
 	void testCheckPlacement() {
