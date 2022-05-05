@@ -34,4 +34,12 @@ public class Controller {
     public void updateSelectedPosition(double gridX, double gridY) {
         model.updateSelectedPosition(gridX, gridY);
     }
+
+    public void rotateAbout(double x, double y, boolean dir) {
+        model.rotateAbout(x, y, dir);
+    }
+
+    public void flipAbout(double x, double y, boolean dir) {
+        model.flipAbout(x, y, dir);
+    }
 }
