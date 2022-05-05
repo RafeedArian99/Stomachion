@@ -38,7 +38,7 @@ public class View extends Application implements Observer {
     // Animation variables and settings
     private RotateTransition rotateTransition, counterclockwiseRotateTransition;
     private ScaleTransition scaleTransition;
-//    private RotateTransition verticalFlipTransition, horizontalFlipTransition;
+    //    private RotateTransition verticalFlipTransition, horizontalFlipTransition;
     private static final double ANIMATION_DURATION = 100;
     private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
     private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
@@ -150,10 +150,11 @@ public class View extends Application implements Observer {
         }
 
         if (highlightedPiece != null) {
-            if (highlightedPiece.isSelected() && !previouslySelected) {
+            if (highlightedPiece.isSelected()) {
                 previouslySelected = true;
                 selectionCanvas.setLayoutX(initialMouseX - WINDOW_SIZE / 2);
                 selectionCanvas.setLayoutY(initialMouseY - WINDOW_SIZE / 2);
+
                 drawPiece(highlightedPiece, selectionCanvas, WINDOW_SIZE / 2 - initialMouseX, WINDOW_SIZE / 2 - initialMouseY);
             }
             else {
@@ -187,6 +188,8 @@ public class View extends Application implements Observer {
         // Draw piece border
         switch (piece.getHighlightState()) {
             case VALID:
+                if (canvas == mainCanvas && piece.isSelected())
+                    System.out.println("Here");
                 gc.setStroke(VALID_LINE_COLOR);
                 break;
             case INVALID:
@@ -228,7 +231,6 @@ public class View extends Application implements Observer {
     }
 
     private class MouseDragHandler implements EventHandler<MouseEvent> {
-
         @Override
         public void handle(MouseEvent mouseEvent) {
             if (controller.hasPieceSelected()) {
@@ -250,68 +252,60 @@ public class View extends Application implements Observer {
         public void handle(MouseEvent mouseEvent) {
             if (previouslySelected) {
                 previouslySelected = false;
+
+                KeyPressHandler kps = (KeyPressHandler) scene.getOnKeyPressed();
+                kps.flipX = -2;
+                kps.flipY = -2;
+                kps.horizontal = false;
+
                 selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
-                ((Group) scene.getRoot()).getChildren().set(2, selectionCanvas);
                 GraphicsContext gc = selectionCanvas.getGraphicsContext2D();
-//                gc.clearRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
                 gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Delete
                 gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Delete
                 selectionCanvas.setLayoutX(WINDOW_SIZE);
                 selectionCanvas.setLayoutY(WINDOW_SIZE);
+
+                ((Group) scene.getRoot()).getChildren().set(2, selectionCanvas);
                 rotateTransition.setNode(selectionCanvas);
                 scaleTransition.setNode(selectionCanvas);
+
                 controller.placePiece();
             }
         }
     }
 
     private class KeyPressHandler implements EventHandler<KeyEvent> {
-        public double mouseX, mouseY;
 
-        private double upX = 0, upY = -2;
+        private double mouseX, mouseY;
+        private double flipX = -2, flipY = -2;
+
+        private boolean horizontal = false;
 
         @Override
         public void handle(KeyEvent keyEvent) {
-            if (keyEvent.getCode() == CLOCKWISE_ROTATE_KEY) {
-                rotateTransition.setByAngle(90);
-                rotateTransition.setAxis(new Point3D(0, 0, 1));
+            boolean clockwise, vertical;
+            if ((clockwise = keyEvent.getCode() == CLOCKWISE_ROTATE_KEY) || keyEvent.getCode() == COUNTERCLOCKWISE_ROTATE_KEY) {
+                rotateTransition.setByAngle(clockwise ? 90 : -90);
                 rotateTransition.play();
 
-                double temp = upX;
-                upX = -upY;
-                upY = temp;
-
-                controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.CLOCKWISE);
+                horizontal = !horizontal;
+                controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, clockwise);
             }
-            else if (keyEvent.getCode() == COUNTERCLOCKWISE_ROTATE_KEY) {
-                rotateTransition.setByAngle(-90);
-                rotateTransition.setAxis(new Point3D(0, 0, 1));
-                rotateTransition.play();
+            else if ((vertical = keyEvent.getCode() == VERTICAL_FLIP_KEY) || keyEvent.getCode() == HORIZONTAL_FLIP_KEY) {
+                if (vertical == horizontal) {
+                    scaleTransition.setByX(flipX);
+                    scaleTransition.setByY(0);
+                    flipX *= -1;
+                }
+                else {
+                    scaleTransition.setByX(0);
+                    scaleTransition.setByY(flipY);
+                    flipY *= -1;
+                }
 
-                double temp = upX;
-                upX = upY;
-                upY = -temp;
-
-                controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.COUNTERCLOCKWISE);
-            }
-            else if (keyEvent.getCode() == VERTICAL_FLIP_KEY) {
-                scaleTransition.setByX(upX);
-                scaleTransition.setByY(upY);
                 scaleTransition.play();
-
-                upX = -upX;
-                upY = -upY;
-
                 controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.VERTICAL);
             }
-//            else if (keyEvent.getCode() == HORIZONTAL_FLIP_KEY) {
-//                rotateTransition.setByAngle(180);
-//                rotateTransition.setAxis(new Point3D(0, 1, 0));
-//                rotateTransition.play();
-//                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.HORIZONTAL);
-//            }
-
-            System.out.println(upX + ", " + upY);
         }
     }
 }
