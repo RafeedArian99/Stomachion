@@ -1,3 +1,9 @@
+/*
+ * Name: Model.java
+ *
+ * Purpose: Contains all the elements for the game
+ */
+
 package Model;
 
 import java.util.ArrayList;
@@ -8,39 +14,61 @@ import Utilities.*;
 import Utilities.Piece.PieceState;
 
 public class Model extends Observable {
-	
-	private boolean win = false;
-	
-	private BoundingBox mainBox;
-	
-	private boolean selectionHas;
-	
-	private Piece selected;
 
-	private double selectedInitialX, selectedInitialY;
-	private double selectedGlobalX, selectedGlobalY;
-	
-	public Model(Observer observer, ArrayList<int[]> textures) {
-		// TODO THIS DOES NOT NEED ANY ARGS NOW
-		this.mainBox = new BoundingBox(textures);
+    private boolean win = false;
 
-		this.addObserver(observer);
-		setChanged();
-		notifyObservers(mainBox.getList());
-	}
-	
-	public boolean checkWin() {
-		boolean checker = true;
-		Piece[] pieces = this.mainBox.getList();
-		for (Piece piece : pieces) {
-			if (!(this.mainBox.encapsulatesCenter(piece))) {
-				checker = false;
-			}
-		}
-		this.win = checker;
-		return this.win;
-	}
+    private BoundingBox mainBox;
 
+    private boolean selectionHas;
+
+    private Piece selected;
+
+    private double selectedInitialX, selectedInitialY;
+    private double selectedGlobalX, selectedGlobalY;
+
+    /**
+     *
+     * Constructs the model
+     *
+     * @param observer object
+     * @param an array of color sets
+     */
+    public Model(Observer observer, ArrayList<int[]> textures) {
+        // TODO THIS DOES NOT NEED ANY ARGS NOW
+        this.mainBox = new BoundingBox(textures);
+
+        this.addObserver(observer);
+        setChanged();
+        notifyObservers(mainBox.getList());
+    }
+
+    /**
+     *
+     * Checks if the game is won
+     *
+     * @return true if the game is won
+     */
+    public boolean checkWin() {
+        boolean checker = true;
+        Piece[] pieces = this.mainBox.getList();
+
+        // Iterates through the pieces to see if they are all in the center board.
+        for (Piece piece : pieces) {
+            if (!(this.mainBox.encapsulatesCenter(piece))) {
+                checker = false;
+            }
+        }
+        this.win = checker;
+        return this.win;
+    }
+
+    /**
+     *
+     * Picks up a piece
+     *
+     * @param X coordinate
+     * @param Y coordinate
+     */
     @SuppressWarnings("deprecation")
     public void pluckPiece(double gridX, double gridY) {
         Piece[] array = this.mainBox.getList();
@@ -62,6 +90,13 @@ public class Model extends Observable {
         notifyObservers(mainBox.getList());
     }
 
+    /**
+     *
+     * Highlights a piece
+     *
+     * @param X coordinate
+     * @param Y coordinate
+     */
     public void highlight(double gridX, double gridY) {
         Piece[] array = this.mainBox.getList();
 
@@ -79,26 +114,53 @@ public class Model extends Observable {
         notifyObservers(this.mainBox.getList());
     }
 
+    /**
+     *
+     * Returns a boolean with whether a piece is selected
+     *
+     * @return true if a piece is selected
+     */
     public boolean hasPieceSelected() {
         return this.selectionHas;
     }
 
+    /**
+     *
+     * Places a piece
+     *
+     */
     public void placePiece() {
         this.selected.setSelected(false);
         this.selectionHas = false;
         this.selected.snapGlobalOffset();
+        this.checkWin();
+        if (this.win == true) {
+            System.out.println("You Won!");
+        }
 
         setChanged();
         notifyObservers(this.mainBox.getList());
     }
 
-    public void checkPlacement(double gridX, double gridY) {
-    }
-
+    /**
+     *
+     * Sets the offset of the selected piece while it is in motion
+     *
+     * @param X coordinate
+     * @param Y coordinate
+     */
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
     }
 
+    /**
+     *
+     * Rotates a selected piece
+     *
+     * @param X coordinate
+     * @param Y coordinate
+     * @param direction to rotate
+     */
     public void rotateAbout(double x, double y, boolean dir) {
         if (this.selectionHas) {
             selected.rotateAbout(x, y, dir);
@@ -109,6 +171,14 @@ public class Model extends Observable {
         }
     }
 
+    /**
+     *
+     * Flips a selected piece
+     *
+     * @param X coordinate
+     * @param Y coordinate
+     * @param direction to flip
+     */
     public void flipAbout(double x, double y, boolean dir) {
         if (this.selectionHas) {
             selected.flipAbout(x, y, dir);
@@ -118,7 +188,4 @@ public class Model extends Observable {
             selectedGlobalY = selected.getGlobalY();
         }
     }
-
-    // plucking removes from the main box and puts into the selection box
-    // placing removes form the selection box and places in the man box.private BoundingBox mainBox;private BoundingBox mainBox;private BoundingBox mainBox;
 }
