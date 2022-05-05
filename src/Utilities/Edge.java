@@ -36,15 +36,20 @@ class Edge {
         double g = other.end.getX();
         double h = other.end.getY();
 
+        double pointOfIntersection;
         if (a == c) {
-
+            pointOfIntersection = (d * (a * (f - h) + e * f - 2 * f * g + g * h) - b * (c * (f - h) + e * f - 2 * f * g + g * h)) /
+                    ((a - c) * (f - h) + (b - d) * (g - e));
+            double dir = Math.signum(this.end.getY() - pointOfIntersection);
+            return Math.signum(pointOfIntersection - this.start.getY()) == dir && pointOfIntersection <= this.end.getY() &&
+                    pointOfIntersection >= other.start.getY() && pointOfIntersection <= other.end.getY();
         }
-
-
-        double pointOfIntersection = (a * (d * e - d * g - e * h + f * g) + b * c * (g - e) + c * e * h - c * f * g) /
-                ((a - c) * (f - h) + b * (g - e) + d * (e - g));
-
-        return pointOfIntersection >= this.start.getX() && pointOfIntersection <= this.end.getX();
+        else {
+            pointOfIntersection = (a * (d * e - d * g - e * h + f * g) + b * c * (g - e) + c * e * h - c * f * g) /
+                    ((a - c) * (f - h) + b * (g - e) + d * (e - g));
+            return pointOfIntersection >= this.start.getX() && pointOfIntersection <= this.end.getX() &&
+                    pointOfIntersection >= other.start.getX() && pointOfIntersection <= other.end.getX();
+        }
     }
 
     @Override

@@ -123,6 +123,7 @@ public class Piece {
      */
     public boolean collidesWith(Piece other) {
 
+
         for (Edge localEdge : this.localEdges) {
             if (other.encapsulates(localEdge.start)) {
                 return true;
@@ -133,6 +134,7 @@ public class Piece {
                 return true;
             }
         }
+
         return false;
     }
 
