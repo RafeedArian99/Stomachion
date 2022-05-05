@@ -45,7 +45,7 @@ public class View extends Application implements Observer {
     private static final KeyCode HORIZONTAL_FLIP_KEY = KeyCode.S;
 
     // Window settings
-    private static final double CELL_SIZE = 25;
+    private static final double CELL_SIZE = 20;
     private static final double WINDOW_SIZE = CELL_SIZE * 36;
     private static final double BOARD_SIZE = CELL_SIZE * 12;
 
@@ -289,7 +289,7 @@ public class View extends Application implements Observer {
                 }
 
                 scaleTransition.play();
-                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.VERTICAL);
+                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, vertical);
             }
         }
     }

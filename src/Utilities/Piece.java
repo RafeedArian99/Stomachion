@@ -122,30 +122,18 @@ public class Piece {
      * @return true if this piece is colliding with another one
      */
     public boolean collidesWith(Piece other) {
-    	
-    	
-    	
-    	// FIX THIS: IT IS CURRENTLY PRETTY BASIC AND ONLY CHECKS VERTICES RATHER THAN EDGES
-    	
-    	
-    	
-        for (Edge localEdge : localEdges) {
-        	//System.out.println("khehc");
+
+        for (Edge localEdge : this.localEdges) {
             if (other.encapsulates(localEdge.start)) {
                 return true;
             }
         }
-        for (Edge otherEdge : other.getEdges()) {
-        	//System.out.println("check");
+        for (Edge otherEdge : other.localEdges) {
             if (this.encapsulates(otherEdge.start)) {
                 return true;
             }
         }
         return false;
-    }
-    
-    public Edge[] getEdges() {
-    	return localEdges;
     }
 
     /**
