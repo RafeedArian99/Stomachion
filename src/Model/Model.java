@@ -86,12 +86,17 @@ public class Model extends Observable {
         this.selected.setSelected(false);
         this.selectionHas = false;
         this.selected.snapGlobalOffset();
+        this.checkWin();
+        if (this.win == true) {
+        	System.out.println("You Won!");
+        }
 
         setChanged();
         notifyObservers(this.mainBox.getList());
     }
 
     public void checkPlacement(double gridX, double gridY) {
+    	
     }
 
     public void updateSelectedPosition(double gridX, double gridY) {

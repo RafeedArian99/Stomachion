@@ -114,7 +114,29 @@ public class Piece {
     public double getGlobalY() {
         return this.globalOffset.getY();
     }
-
+    
+    private boolean intersect(Vertex a, Vertex b, Vertex c, Vertex d) {
+    	int[][] s0 = new int[2][2];
+    	int[][] s1 = new int[2][2];
+    	s0[0][0] = (int) a.getX();
+    	s0[0][1] = (int) a.getY();
+    	s0[1][0] = (int) b.getX();
+    	s0[1][1] = (int) b.getY();
+    	s1[0][0] = (int) c.getX();
+    	s1[0][1] = (int) c.getY();
+    	s1[1][0] = (int) d.getX();
+    	s1[1][1] = (int) d.getY();
+        int dx0 = s0[1][0]-s0[0][0];
+        int dx1 = s1[1][0]-s1[0][0];
+        int dy0 = s0[1][1]-s0[0][1];
+        int dy1 = s1[1][1]-s1[0][1];
+        int p0 = dy1*(s1[1][0]-s0[0][0]) - dx1*(s1[1][1]-s0[0][1]);
+        int p1 = dy1*(s1[1][0]-s0[1][0]) - dx1*(s1[1][1]-s0[1][1]);
+        int p2 = dy0*(s0[1][0]-s1[0][0]) - dx0*(s0[1][1]-s1[0][1]);
+        int p3 = dy0*(s0[1][0]-s1[1][0]) - dx0*(s0[1][1]-s1[1][1]);
+    	return (p0*p1<=0) & (p2*p3<=0);
+    }
+    
     /**
      * Returns true if this piece is colliding with another one.
      *
@@ -122,30 +144,33 @@ public class Piece {
      * @return true if this piece is colliding with another one
      */
     public boolean collidesWith(Piece other) {
-    	
+    	//for (Edge localEdge : this.localEdges) {
+    	//	for (Edge otherEdge : other.localEdges) {
+    	//		//System.out.println("check");
+    	//		if (intersect(localEdge.start, localEdge.end, otherEdge.start, otherEdge.end)) {
+    	//			return true;
+    	//		}
+    	//	}
+    	//}
     	
     	
     	// FIX THIS: IT IS CURRENTLY PRETTY BASIC AND ONLY CHECKS VERTICES RATHER THAN EDGES
     	
     	
     	
-        for (Edge localEdge : localEdges) {
+        for (Edge localEdge : this.localEdges) {
         	//System.out.println("khehc");
             if (other.encapsulates(localEdge.start)) {
                 return true;
             }
         }
-        for (Edge otherEdge : other.getEdges()) {
+        for (Edge otherEdge : other.localEdges) {
         	//System.out.println("check");
             if (this.encapsulates(otherEdge.start)) {
                 return true;
             }
         }
         return false;
-    }
-    
-    public Edge[] getEdges() {
-    	return localEdges;
     }
 
     /**

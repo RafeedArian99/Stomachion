@@ -120,7 +120,7 @@ public class View extends Application implements Observer {
         stage.show();
 
         //TODO pass in textures
-        controller = new Controller(this, "TEXTURES HERE");
+        controller = new Controller(this, "final-14-1x.png");
     }
 
     @Override
