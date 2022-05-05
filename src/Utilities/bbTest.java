@@ -16,9 +16,11 @@ public class bbTest {
 //		System.out.println(test1.encapsulates(test));
 //		test.rotateAbout(0, 0, false);
 //		System.out.println(test1.encapsulates(test));
-        Edge e1 = new Edge(new Vertex(0, 2), new Vertex(0, -2));
-        Edge e2 = new Edge(new Vertex(-2, 0), new Vertex(2, 0));
-        System.out.println(e1.intersectsWith(e2));
+        Piece piece = new Piece(0, new int[3]);
+        Piece piece1 = new Piece(2, new int[3]);
+        piece1.setGlobalOffset(0.5, 2);
+
+        System.out.println(piece.collidesWith(piece1));
     }
 
 }

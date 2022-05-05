@@ -22,22 +22,47 @@ class Vertex {
         this.coords = coords;
     }
 
+    /**
+     * Gets the negative of this vertex.
+     *
+     * @return vertex representing negative of this vertex
+     */
     public Vertex inverse() {
         return new Vertex(-this.getX(), -this.getY());
     }
 
+    /**
+     * Sets the x of this vertex
+     *
+     * @param x new x of this vertex
+     */
     public void setX(double x) {
         coords[0] = x;
     }
 
+    /**
+     * Sets the y of this vertex
+     *
+     * @param y new y of this vertex
+     */
     public void setY(double y) {
         coords[1] = y;
     }
 
+    /**
+     * Gets the x of this vertex.
+     *
+     * @return the x of this vertex.
+     */
     public double getX() {
         return coords[0];
     }
 
+    /**
+     * Gets the y of this vertex.
+     *
+     * @return the y of this vertex.
+     */
     public double getY() {
         return coords[1];
     }
@@ -54,6 +79,7 @@ class Vertex {
 
     /**
      * Rotates this vertex about (0, 0).
+     *
      * @param isClockwise whether or not vertex is to be rotated clockwise or counter-clockwise.
      */
     public void rotate(boolean isClockwise) {
@@ -64,12 +90,20 @@ class Vertex {
         this.setY(-dir * temp);
     }
 
-    // TODO: Implement
+    /**
+     * Flips this vertex about an axis horizontally.
+     *
+     * @param y y-axis to flip about
+     */
     public void flipVerticallyAbout(double y) {
         this.setY(2 * y - this.getY());
     }
 
-    // TODO: Implement
+    /**
+     * Flips this vertex about an axis horizontally.
+     *
+     * @param x x-axis to flip about
+     */
     public void flipHorizontallyAbout(double x) {
         this.setX(2 * x - this.getX());
     }
