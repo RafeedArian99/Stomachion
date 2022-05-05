@@ -11,11 +11,18 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import Controller.Controller;
@@ -29,6 +36,7 @@ public class View extends Application implements Observer {
     private Controller controller;
     private Canvas mainCanvas;
     private Scene scene;
+    private static String textureChosen;
 
     // Selection Canvas variables
     private Canvas selectionCanvas;
@@ -65,6 +73,67 @@ public class View extends Application implements Observer {
 
     @Override
     public void start(Stage stage) throws Exception {
+    	stage.setTitle("Stomachion");
+    	textureChosen = "final-14-1x.png";
+    	Group root = new Group();
+    	int red = (int) (Math.random()*(255/2));
+    	int green = (int) (Math.random()*(255/2));
+    	int blue = (int) (Math.random()*(255/2));
+    	Scene scene = new Scene(root, WINDOW_SIZE, WINDOW_SIZE, Color.rgb(red, green, blue));
+    	Text text = new Text(105, 200, "STOMACHION");
+    	Button startButton = new Button("START");
+    	Image textureImage1 = new Image("/Textures/final-14-1x.png");
+    	ImageView image1Texture = new ImageView(textureImage1);
+    	image1Texture.setFitWidth(90);
+    	image1Texture.setFitHeight(20);
+    	Image textureImage2 = new Image("/Textures/blues-14-1x.png");
+    	ImageView image2Texture = new ImageView(textureImage2);
+    	image2Texture.setFitWidth(90);
+    	image2Texture.setFitHeight(20);
+    	Image textureImage3 = new Image("/Textures/uofa_colors-14-1x.png");
+    	ImageView image3Texture = new ImageView(textureImage3);
+    	image3Texture.setFitWidth(90);
+    	image3Texture.setFitHeight(20);
+    	Button texture1 = new Button("", image1Texture);
+    	Button texture2 = new Button("", image2Texture);
+    	Button texture3 = new Button("", image3Texture);
+    	Text textureSelect = new Text(600, 110, "Texture 1 Selected");
+    	textureSelect.setFont(Font.font("Consolas", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 15));
+    	textureSelect.setFill(Color.WHITE);
+    	text.setFont(Font.font("Consolas", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 75));
+    	text.setFill(Color.LIGHTGRAY);
+    	startButton.relocate(250, WINDOW_SIZE/2);
+    	texture1.relocate(610, 0);
+    	texture2.relocate(610, 30);
+    	texture3.relocate(610, 60);
+    	startButton.setPrefSize(200, 100);
+    	startButton.setFont(Font.font("Consolas", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 25));
+    	startButton.setTextFill(Color.BLUE);
+    	root.getChildren().add(text);
+    	root.getChildren().add(startButton);
+    	root.getChildren().add(texture1);
+    	root.getChildren().add(texture2);
+    	root.getChildren().add(texture3);
+    	root.getChildren().add(textureSelect);
+		startButton.setOnAction((event) -> { 
+			startGame(stage);
+		});
+		texture1.setOnAction((event) -> { 
+			textureSelect.setText("Texture 1 Selected");
+			textureChosen = "final-14-1x.png";
+		});
+		texture2.setOnAction((event) -> { 
+			textureSelect.setText("Texture 2 Selected");
+			textureChosen = "blues-14-1x.png";
+		});
+		texture3.setOnAction((event) -> { 
+			textureSelect.setText("Texture 3 Selected");
+			textureChosen = "uofa_colors-14-1x.png";
+		});
+		stage.setScene(scene);
+		stage.show();
+    }
+    public void startGame(Stage stage) {
         stage.setTitle("Stomachion");
         GraphicsContext gc;
 
@@ -118,9 +187,7 @@ public class View extends Application implements Observer {
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-
-        //TODO pass in textures
-        controller = new Controller(this, "TEXTURES HERE");
+        controller = new Controller(this, textureChosen);
     }
 
     @Override
@@ -290,7 +357,7 @@ public class View extends Application implements Observer {
                 }
 
                 scaleTransition.play();
-                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, Piece.VERTICAL);
+                controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, vertical);
             }
         }
     }
