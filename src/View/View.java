@@ -78,6 +78,14 @@ public class View extends Application implements Observer {
         launch(args);
     }
 
+    /**
+     * This is the first page that opens up with the main menu. it picks a random color for the background of the menu, displays the name of the game
+     * and a start button. In the top right it displays three buttons for the different textures that could be used in the game as well as text that
+     * shows which of the textures you have selected. When the start button is pressed, it will open a new window with the stomachion game with the
+     * specified texture.
+     * @Param stage
+     * 
+     */
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Stomachion");
