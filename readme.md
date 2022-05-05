@@ -4,5 +4,7 @@ Archimedes' Stomachion is a game where you can assemble pieces to form a perfect
 
 ## Controls ##
 Q and E to Rotate
+
 W to flip vertically
+
 S to flip horizontally
