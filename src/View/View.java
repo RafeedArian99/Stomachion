@@ -39,13 +39,13 @@ public class View extends Application implements Observer {
     private RotateTransition rotateTransition;
     private ScaleTransition scaleTransition;
     private static final double ANIMATION_DURATION = 100;
-    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
-    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
+    private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.E;
+    private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.Q;
     private static final KeyCode VERTICAL_FLIP_KEY = KeyCode.W;
     private static final KeyCode HORIZONTAL_FLIP_KEY = KeyCode.S;
 
     // Window settings
-    private static final double CELL_SIZE = 25;
+    private static final double CELL_SIZE = 20;
     private static final double WINDOW_SIZE = CELL_SIZE * 36;
     private static final double BOARD_SIZE = CELL_SIZE * 12;
 
@@ -119,7 +119,8 @@ public class View extends Application implements Observer {
         stage.setResizable(false);
         stage.show();
 
-        controller = new Controller(this);
+        //TODO pass in textures
+        controller = new Controller(this, "TEXTURES HERE");
     }
 
     @Override

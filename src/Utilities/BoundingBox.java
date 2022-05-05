@@ -23,8 +23,8 @@ public class BoundingBox {
 	 * Creates the bounding box and places all of the shapes with random positions,
 	 * colors, and orientations.
 	 */
-	public BoundingBox() {
-		Image texturePack = new Image("/Textures/final-14-1x.png");
+	public BoundingBox(String textures) {
+		Image texturePack = new Image("/Textures/" + textures);
 		PixelReader pixelReader = texturePack.getPixelReader();
 
 		ArrayList<Color> colors = new ArrayList<>();
