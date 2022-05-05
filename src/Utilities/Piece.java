@@ -1,7 +1,8 @@
 package Utilities;
 
-//import javafx.scene.paint.Color;
-
+/**
+ * This class models a piece of the Stomachion puzzle.
+ */
 public class Piece {
     public static final boolean VERTICAL = true;
     public static final boolean HORIZONTAL = false;
@@ -61,26 +62,56 @@ public class Piece {
         this.globalOffset = new Vertex(0, 0);
     }
 
+    /**
+     * Get the color assigned to this piece.
+     *
+     * @return the color assigned to this piece
+     */
     public int[] getColor() {
         return this.color;
     }
 
+    /**
+     * Sets whether or not piece is "selected"
+     *
+     * @param state new PieceState of the piece
+     */
     public void setSelected(boolean state) {
         this.selected = state;
     }
 
+    /**
+     * Checks if the piece is "selected".
+     *
+     * @return true if the piece is "selected"
+     */
     public boolean isSelected() {
         return this.selected;
     }
 
+    /**
+     * Sets the state of the piece.
+     *
+     * @param state new state of the current piece
+     */
     public void highlight(PieceState state) {
         this.highlighted = state;
     }
 
+    /**
+     * Checks whether the piece is "highlighted".
+     *
+     * @return true if the piece is "highlighted"
+     */
     public PieceState getHighlightState() {
         return this.highlighted;
     }
 
+    /**
+     * Gets all the coordinated of the piece.
+     *
+     * @return all the coordinated of the piece
+     */
     public double[][] getAllCoords() {
         double[][] allCoords = new double[2][localEdges.length];
         for (int i = 0; i < localEdges.length; i++) {
@@ -92,25 +123,50 @@ public class Piece {
         return allCoords;
     }
 
+    /**
+     * Adds to the piece's global offset
+     *
+     * @param x x offset
+     * @param y y offset
+     */
     public void addToGlobalOffset(double x, double y) {
         this.globalOffset.setX(this.globalOffset.getX() + x);
         this.globalOffset.setY(this.globalOffset.getY() + y);
     }
 
+    /**
+     * Sets the piece's global coordinates
+     *
+     * @param x x-coordinate of new global offset
+     * @param y y-coordinate of new global offset
+     */
     public void setGlobalOffset(double x, double y) {
         this.globalOffset.setX(x);
         this.globalOffset.setY(y);
     }
 
+    /**
+     * Snaps the global offset to a nearest peg.
+     */
     public void snapGlobalOffset() {
         this.globalOffset.setX(Math.round(this.globalOffset.getX()));
         this.globalOffset.setY(Math.round(this.globalOffset.getY()));
     }
 
+    /**
+     * Gets the x-coordinate of the global offset.
+     *
+     * @return the x-coordinate of the global offset
+     */
     public double getGlobalX() {
         return this.globalOffset.getX();
     }
 
+    /**
+     * Gets the y-coordinate of the global offset.
+     *
+     * @return the y-coordinate of the global offset
+     */
     public double getGlobalY() {
         return this.globalOffset.getY();
     }
@@ -122,7 +178,15 @@ public class Piece {
      * @return true if this piece is colliding with another one
      */
     public boolean collidesWith(Piece other) {
+        // Check edges for intersection
+        for (Edge localEdge : this.localEdges) {
+            for (Edge otherEdge : other.localEdges) {
+                if (localEdge.getsIntersectedBy(otherEdge) && otherEdge.getsIntersectedBy(localEdge))
+                    return true;
+            }
+        }
 
+        // Check vertices for encapsulation
         for (Edge localEdge : this.localEdges) {
             if (other.encapsulates(localEdge.start)) {
                 return true;
@@ -133,14 +197,15 @@ public class Piece {
                 return true;
             }
         }
+
         return false;
     }
 
     /**
      * Rotates this piece about a given coordinate in global space.
      *
-     * @param x           x-coordinate of rotation point
-     * @param y           y-coordinate of rotation point
+     * @param x   x-coordinate of rotation point
+     * @param y   y-coordinate of rotation point
      * @param dir whether or not piece is to rotate clockwise or counter-clockwise
      */
     public void rotateAbout(double x, double y, boolean dir) {
@@ -162,8 +227,8 @@ public class Piece {
     /**
      * Flips this piece vertically about a given y-coordinate
      *
-     * @param x          x-coordinate of flip axis
-     * @param y          y-coordinate of flip axis
+     * @param x   x-coordinate of flip axis
+     * @param y   y-coordinate of flip axis
      * @param dir whether or not piece is to be flipped vertically or horizontally
      */
     public void flipAbout(double x, double y, boolean dir) {
@@ -212,14 +277,24 @@ public class Piece {
         return rep;
     }
 
+    /**
+     * Checks if a point is encapsulated by the piece.
+     *
+     * @param x x-coordinate of point
+     * @param y y-coordinate of point
+     * @return true if point is encapsulated by the piece
+     */
     public boolean encapsulates(double x, double y) {
         return this.encapsulates(new Vertex(x, y));
     }
 
+    /**
+     * Resets the global offset back to global origin
+     */
     public void resetGlobalOffset() {
-    	this.globalOffset = new Vertex(0, 0);
+        this.globalOffset = new Vertex(0, 0);
     }
-    
+
     /* Private functions */
 
     private boolean encapsulates(Vertex v) {
@@ -234,5 +309,5 @@ public class Piece {
 
         return downCount == 1 && upCount == 1;
     }
-    
+
 }

@@ -26,7 +26,13 @@ class Edge {
         return new Edge(start.add(offset), end.add(offset));
     }
 
-    public boolean intersectsWith(Edge other) {
+    /**
+     * Checks if this edge is intersected by another edge.
+     * @param other other edge to check intersection with
+     * @return true if this edge is intersected by another edge
+     */
+    public boolean getsIntersectedBy(Edge other) {
+        // Simplify all the edge ends
         double a = this.start.getX();
         double b = this.start.getY();
         double c = this.end.getX();
@@ -36,15 +42,28 @@ class Edge {
         double g = other.end.getX();
         double h = other.end.getY();
 
+        // For vertical edge
         if (a == c) {
+            double pointOfIntersection = (d * (a * (f - h) + e * f - 2 * f * g + g * h) - b * (c * (f - h) + e * f - 2 * f * g + g * h)) /
+                    ((a - c) * (f - h) + (b - d) * (g - e));
 
+            if (pointOfIntersection == b || pointOfIntersection == d)
+                return true;
+
+            double dir = Math.signum(d - b);
+            return Math.signum(pointOfIntersection - b) == dir && Math.signum(d - pointOfIntersection) == dir;
         }
+        // For any other edge
+        else {
+            double pointOfIntersection = (a * (d * e - d * g - e * h + f * g) + b * c * (g - e) + c * e * h - c * f * g) /
+                    ((a - c) * (f - h) + b * (g - e) + d * (e - g));
 
+            if (pointOfIntersection == a || pointOfIntersection == c)
+                return true;
 
-        double pointOfIntersection = (a * (d * e - d * g - e * h + f * g) + b * c * (g - e) + c * e * h - c * f * g) /
-                ((a - c) * (f - h) + b * (g - e) + d * (e - g));
-
-        return pointOfIntersection >= this.start.getX() && pointOfIntersection <= this.end.getX();
+            double dir = Math.signum(c - a);
+            return Math.signum(pointOfIntersection - a) == dir && Math.signum(c - pointOfIntersection) == dir;
+        }
     }
 
     @Override
