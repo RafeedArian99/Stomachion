@@ -12,8 +12,11 @@ class StomachionTests {
 
 	@Test
 	void testAddObserverToModel() {
-		
-	}
+		final int[] a = {999};
+        Controller controller = new Controller((observable, obj) -> a[0] = 444, "");
+        System.out.println();
+        assertEquals(a[0], 444);	
+    }
 	
 	void testPluckPiece() {
 		
