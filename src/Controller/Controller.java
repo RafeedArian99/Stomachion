@@ -2,12 +2,13 @@ package Controller;
 
 import Model.Model;
 
+import java.util.ArrayList;
 import java.util.Observer;
 
 public class Controller {
     private final Model model;
 
-    public Controller(Observer observer, String textures) {
+    public Controller(Observer observer, ArrayList<int[]> textures) {
         model = new Model(observer, textures);
     }
 

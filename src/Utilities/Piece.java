@@ -1,6 +1,6 @@
 package Utilities;
 
-import javafx.scene.paint.Color;
+//import javafx.scene.paint.Color;
 
 public class Piece {
     public static final boolean VERTICAL = true;
@@ -16,7 +16,7 @@ public class Piece {
 
     private boolean selected = false;
     private PieceState highlighted = PieceState.NEUTRAL;
-    private Color color;
+    private final int[] color;
 
     public enum PieceState {
         NEUTRAL, VALID, INVALID
@@ -27,7 +27,7 @@ public class Piece {
      *
      * @param pieceID Unique ID for the piece (0-13)
      */
-    public Piece(int pieceID, Color color) {
+    public Piece(int pieceID, int[] color) {
         this.pieceID = pieceID;
         this.color = color;
 
@@ -61,7 +61,7 @@ public class Piece {
         this.globalOffset = new Vertex(0, 0);
     }
 
-    public Color getColor() {
+    public int[] getColor() {
         return this.color;
     }
 
