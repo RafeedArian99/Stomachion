@@ -213,7 +213,6 @@ public class View extends Application implements Observer {
         stage.setResizable(false);
         stage.show();
 
-        System.out.println(textureChosen);
         Image image = new Image("/Textures/" + textureChosen);
         PixelReader pixelReader = image.getPixelReader();
         ArrayList<int[]> textures = new ArrayList<>();
