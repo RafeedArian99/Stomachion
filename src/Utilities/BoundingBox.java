@@ -7,6 +7,7 @@
 package Utilities;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class BoundingBox {
 
@@ -18,19 +19,29 @@ public class BoundingBox {
      * colors, and orientations.
      */
     public BoundingBox(ArrayList<int[]> textures) {
+        Random random = new Random();
+        long seed = random.nextLong();
+        System.out.println("Seed: " + seed);
+        random = new Random(seed);
+
+        /* TODO: Remove this comment
+        Seeds that don't work:
+         */
 
         // creates the array to put the pieces in
         this.pieceList = new Piece[14];
+        Piece centerBoard = new Piece(14, null);
+        centerBoard.addToGlobalOffset(12, 12);
 
         // iterates through pieces
         for (int i = 0; i < 14; i++) {
 
             // makes a new piece
-            Piece newPiece = new Piece(i, textures.remove((int) (Math.random() * (14 - i))));
+            Piece newPiece = new Piece(i, textures.remove(random.nextInt(14 - i)));
 
             // randomizes orientation
-            int rotate = (int)(Math.random() * 4);
-            int flip = (int)(Math.random() * 2);
+            int rotate = random.nextInt(4);
+            int flip = random.nextInt(2);
             for (int count = 0; count < rotate; count++) {
                 newPiece.rotateAbout(0, 0, false);
             }
@@ -43,21 +54,22 @@ public class BoundingBox {
 
                 // places the piece in a random spot
                 newPiece.resetGlobalOffset();
-                int x = (int)(Math.random() * 36);
-                int y = (int)(Math.random() * 36);
+                int x = random.nextInt(37);
+                int y = random.nextInt(37);
                 newPiece.addToGlobalOffset(x, y);
                 boolean checker = false;
 
                 // checks if the positioning is valid
-                if (!(this.encapsulates(newPiece))) {
+                if (!this.encapsulates(newPiece) || centerBoard.collidesWith(newPiece)) {
                     checker = true;
                 }
-                for (int j = 0; j < i; j++) {
+                else for (int j = 0; j < i; j++) {
                     if (newPiece.collidesWith(pieceList[j])) {
                         checker = true;
                     }
                 }
-                if (checker == false) {
+
+                if (!checker) {
                     counter = 100;
                 }
                 counter++;
@@ -68,7 +80,6 @@ public class BoundingBox {
     }
 
     /**
-     *
      * Returns the list of puzzle pieces
      *
      * @return an array of pieces
@@ -78,16 +89,15 @@ public class BoundingBox {
     }
 
     /**
-     *
      * This function checks if a piece is fully within the center of the board.
      *
-     * @param a piece
+     * @param piece piece
      * @return true if the piece is fully within the center board
      */
     public boolean encapsulatesCenter(Piece piece) {
         boolean checker = true;
         double[][] coords = piece.getAllCoords();
-        for(int i = 0; i < coords.length; i++) {
+        for (int i = 0; i < coords.length; i++) {
             if (!(coords[0][i] >= 12 && coords[0][i] <= 24 && coords[1][i] >= 12 && coords[1][i] <= 24)) {
                 checker = false;
             }
@@ -96,7 +106,6 @@ public class BoundingBox {
     }
 
     /**
-     *
      * This function checks if the board properly contains a piece
      * it should be fully within the board but outside of the center
      * square
@@ -105,13 +114,6 @@ public class BoundingBox {
      */
     public boolean encapsulates(Piece piece) {
         double[][] pieceCoords = piece.getAllCoords();
-
-        // checks for vertices that overlap with the center board
-        for (int i = 0; i < pieceCoords[0].length; i++) {
-            if (pieceCoords[0][i] > 12 && pieceCoords[0][i] < 24 && pieceCoords[1][i] > 12 && pieceCoords[1][i] < 24 ) {
-                return false;
-            }
-        }
 
         // checks if the piece is fully on the board
         for (double[] row : pieceCoords) {

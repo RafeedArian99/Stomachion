@@ -180,20 +180,22 @@ public class Piece {
     public boolean collidesWith(Piece other) {
         // Check edges for intersection
         for (Edge localEdge : this.localEdges) {
+            Edge localEdgeCorrected = localEdge.add(globalOffset);
             for (Edge otherEdge : other.localEdges) {
-                if (localEdge.getsIntersectedBy(otherEdge) && otherEdge.getsIntersectedBy(localEdge))
+                Edge otherEdgeCorrected = otherEdge.add(other.globalOffset);
+                if (localEdgeCorrected.getsIntersectedBy(otherEdgeCorrected) && otherEdgeCorrected.getsIntersectedBy(localEdgeCorrected))
                     return true;
             }
         }
 
         // Check vertices for encapsulation
         for (Edge localEdge : this.localEdges) {
-            if (other.encapsulates(localEdge.start)) {
+            if (other.encapsulates(localEdge.start.add(globalOffset))) {
                 return true;
             }
         }
         for (Edge otherEdge : other.localEdges) {
-            if (this.encapsulates(otherEdge.start)) {
+            if (this.encapsulates(otherEdge.start.add(other.globalOffset))) {
                 return true;
             }
         }
