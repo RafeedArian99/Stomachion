@@ -89,7 +89,7 @@ public class Controller {
     /**
      * Makes call to Model's checkWin function, returns a boolean
      * that is true if the player found a valid solution.
-     * @return
+     * @return true if player found a solution
      */
     public boolean checkWin() {
         return model.checkWin();

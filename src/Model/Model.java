@@ -46,6 +46,9 @@ public class Model extends Observable {
      * @return true if the game is won
      */
     public boolean checkWin() {
+        if (this.selectionHas)
+            return false;
+
         boolean checker = true;
         Piece[] pieces = this.mainBox.getList();
 
@@ -76,6 +79,9 @@ public class Model extends Observable {
                 selectedInitialY = gridY;
                 selectedGlobalX = selected.getGlobalX();
                 selectedGlobalY = selected.getGlobalY();
+
+                prevValidX = selectedGlobalX;
+                prevValidY = selectedGlobalY;
 
                 break;
             }
@@ -126,9 +132,6 @@ public class Model extends Observable {
         this.selected.setGlobalOffset(prevValidX, prevValidY);
         this.selected.highlight(PieceState.NEUTRAL);
         this.selected.snapGlobalOffset();
-
-        setChanged();
-        notifyObservers(this.mainBox.getList());
     }
 
     /**
@@ -192,21 +195,4 @@ public class Model extends Observable {
             selectedGlobalY = selected.getGlobalY();
         }
     }
-
-//    public void checkPlacement(double gridX, double gridY) {
-//        double prevGlobalX = selected.getGlobalX();
-//        double prevGlobalY = selected.getGlobalY();
-//        selected.snapGlobalOffset();
-//
-//        selected.highlight(PieceState.VALID);
-//        for (Piece piece : mainBox.getList()) {
-//            if (piece.collidesWith(selected)) {
-//                System.out.println("INVALID");
-//                selected.highlight(PieceState.INVALID);
-//                break;
-//            }
-//        }
-//
-//        selected.setGlobalOffset(prevGlobalX, prevGlobalY);
-//    }
 }
