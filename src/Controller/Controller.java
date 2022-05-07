@@ -14,7 +14,7 @@ public class Controller {
      * @param observer: Observer type object to be passed through to Model.
      * @param textures: list of textures to be passed through to Model.
      */
-    public Controller(Observer observer, ArrayList<int[]> textures) {
+    public Controller(Observer observer, ArrayList<double[]> textures) {
         model = new Model(observer, textures);
     }
 

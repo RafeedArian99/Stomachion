@@ -18,7 +18,7 @@ public class BoundingBox {
      * Creates the bounding box and places all of the shapes with random positions,
      * colors, and orientations.
      */
-    public BoundingBox(ArrayList<int[]> textures) {
+    public BoundingBox(ArrayList<double[]> textures) {
         Random random = new Random();
         long seed = random.nextLong();
         System.out.println("Seed: " + seed);

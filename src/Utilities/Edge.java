@@ -28,6 +28,7 @@ class Edge {
 
     /**
      * Checks if this edge is intersected by another edge.
+     *
      * @param other other edge to check intersection with
      * @return true if this edge is intersected by another edge
      */
@@ -44,7 +45,7 @@ class Edge {
 
         // For vertical edge
         if (a == c) {
-            double pointOfIntersection = (d * (a * (f - h) + e * f - 2 * f * g + g * h) - b * (c * (f - h) + e * f - 2 * f * g + g * h)) /
+            double pointOfIntersection = (d * (a * (f - h) + e * h - f * g) + b * (c * (h - f) - e * h + f * g)) /
                     ((a - c) * (f - h) + (b - d) * (g - e));
 
             if (pointOfIntersection == b || pointOfIntersection == d)

@@ -9,7 +9,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -45,7 +44,7 @@ public class View extends Application implements Observer {
     private Text text;
 
     // Selection Canvas variables
-    private Selection selection;
+    private SelectionBox selection;
 //    private Canvas selectionCanvas;
 //    private double initialMouseX, initialMouseY;
 //    private boolean previouslySelected;
@@ -159,7 +158,7 @@ public class View extends Application implements Observer {
 //        gc.setLineCap(StrokeLineCap.ROUND);
 //        selectionCanvas.setLayoutX(WINDOW_SIZE);
 //        selectionCanvas.setLayoutY(WINDOW_SIZE);
-        selection = new Selection();
+        selection = new SelectionBox();
         // Animations
 //        rotateTransition = new RotateTransition();
 //        rotateTransition.setDuration(Duration.millis(ANIMATION_DURATION));
@@ -207,10 +206,10 @@ public class View extends Application implements Observer {
 
         Image image = new Image("/Textures/" + textureChosen);
         PixelReader pixelReader = image.getPixelReader();
-        ArrayList<int[]> textures = new ArrayList<>();
+        ArrayList<double[]> textures = new ArrayList<>();
         for (int i = 0; i < 14; i++) {
             Color color = pixelReader.getColor(i, 0);
-            textures.add(new int[]{(int) (color.getRed() * 255), (int) (color.getGreen() * 255), (int) (color.getBlue() * 255)});
+            textures.add(new double[]{color.getRed(), color.getGreen(), color.getBlue()});
         }
 
         controller = new Controller(this, textures);
@@ -234,15 +233,14 @@ public class View extends Application implements Observer {
 
         if (highlightedPiece != null) {
             if (highlightedPiece.isSelected()) {
-                selection.moveCenterTo(selection.initialX, selection.initialY);
+//                selection.moveCenterTo(selection.initialX, selection.initialY);
 //                previouslySelected = true;
 //                selectionCanvas.setLayoutX(initialMouseX - WINDOW_SIZE / 2);
 //                selectionCanvas.setLayoutY(initialMouseY - WINDOW_SIZE / 2);
 
 //                drawPiece(highlightedPiece, selectionCanvas, WINDOW_SIZE / 2 - initialMouseX, WINDOW_SIZE / 2 - initialMouseY);
-                if (!selection.previouslySelected) {
-                    selection.draw(highlightedPiece);
-                }
+//                if (!selection.previouslySelected) {
+                selection.draw(highlightedPiece);
                 selection.previouslySelected = true;
             }
             else {
@@ -274,8 +272,8 @@ public class View extends Application implements Observer {
 
         // Fill piece
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        int[] color = piece.getColor();
-        gc.setFill(Color.rgb(color[0], color[1], color[2]));
+        double[] color = piece.getColor();
+        gc.setFill(new Color(color[0], color[1], color[2], 1));
         gc.fillPolygon(xCoords, yCoords, xCoords.length);
 
         // Draw piece border
@@ -402,7 +400,7 @@ public class View extends Application implements Observer {
         }
     }
 
-    private class Selection {
+    private class SelectionBox {
         private Canvas canvas;
         private double[] xCoords, yCoords;
         private double initialX, initialY;
@@ -411,7 +409,7 @@ public class View extends Application implements Observer {
         private final RotateTransition rotateAnimation;
         private final ScaleTransition flipAnimation;
 
-        public Selection() {
+        public SelectionBox() {
             canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
             GraphicsContext gc = canvas.getGraphicsContext2D(); // TODO: Remove
             gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
@@ -422,6 +420,8 @@ public class View extends Application implements Observer {
 
             flipAnimation = new ScaleTransition();
             flipAnimation.setDuration(Duration.millis(ANIMATION_DURATION));
+
+            previouslySelected = false;
         }
 
         public void reset() {
@@ -446,7 +446,38 @@ public class View extends Application implements Observer {
         }
 
         public void draw(Piece highlightedPiece) {
+            GraphicsContext gc = canvas.getGraphicsContext2D();
 
+            if (!previouslySelected) {
+                this.moveCenterTo(initialX, initialY);
+                double[][] allCoords = highlightedPiece.getAllCoords();
+                xCoords = allCoords[0];
+                yCoords = allCoords[1];
+
+                for (int i = 0; i < xCoords.length; i++) {
+                    xCoords[i] = xCoords[i] * CELL_SIZE + WINDOW_SIZE / 2 - initialX;
+                    yCoords[i] = yCoords[i] * CELL_SIZE + WINDOW_SIZE / 2 - initialY;
+                }
+
+                double[] color = highlightedPiece.getColor();
+                gc.setFill(new Color(color[0], color[1], color[2], 1));
+                gc.fillPolygon(xCoords, yCoords, xCoords.length);
+            }
+
+            switch (highlightedPiece.getHighlightState()) {
+                case VALID:
+                    gc.setStroke(VALID_LINE_COLOR);
+                    break;
+                case INVALID:
+                    gc.setStroke(INVALID_LINE_COLOR);
+            }
+
+            for (int i = 0; i < xCoords.length; i++) {
+                double endX = i == xCoords.length - 1 ? xCoords[0] : xCoords[i + 1];
+                double endY = i == yCoords.length - 1 ? yCoords[0] : yCoords[i + 1];
+
+                gc.strokeLine(xCoords[i], yCoords[i], endX, endY);
+            }
         }
     }
 }

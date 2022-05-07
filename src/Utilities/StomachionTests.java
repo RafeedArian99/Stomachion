@@ -25,9 +25,9 @@ class StomachionTests {
 	 */
 	void testAddObserverToModel() {
 		int[] a = {999};
-		ArrayList<int[]> textures = new ArrayList<>();
+		ArrayList<double[]> textures = new ArrayList<>();
 		for (int i = 0; i < 14; i++)
-			textures.add(new int[3]);
+			textures.add(new double[3]);
         Controller controller = new Controller((observable, obj) -> a[0] = 444, textures);
         //System.out.println(a[0]);
         assertEquals(a[0], 444);	
@@ -38,9 +38,9 @@ class StomachionTests {
 	void testCheckWin() {
 		
 		Piece[] piece = new Piece[1];
-		ArrayList<int[]> textures = new ArrayList<>();
+		ArrayList<double[]> textures = new ArrayList<>();
 		for (int i = 0; i < 14; i++)
-			textures.add(new int[3]);
+			textures.add(new double[3]);
 		
 		BoundingBox bb = new BoundingBox(textures);
 		Controller controller = new Controller((observable, obj) -> {
@@ -60,9 +60,9 @@ class StomachionTests {
 	void testPluckPiece() {
 
 		Piece[] piece = new Piece[1];
-		ArrayList<int[]> textures = new ArrayList<>();
+		ArrayList<double[]> textures = new ArrayList<>();
 		for (int i = 0; i < 14; i++)
-			textures.add(new int[3]);
+			textures.add(new double[3]);
 		Controller controller = new Controller((observable, obj) -> {
 			piece[0] = ((Piece[]) obj)[0];
 		}, textures);
@@ -80,9 +80,9 @@ class StomachionTests {
 	 */
 	void testHighlight() {
 		Piece[] piece = new Piece[1];
-		ArrayList<int[]> textures = new ArrayList<>();
+		ArrayList<double[]> textures = new ArrayList<>();
 		for (int i = 0; i < 14; i++)
-			textures.add(new int[3]);
+			textures.add(new double[3]);
 		Controller controller = new Controller((observable, obj) -> {
 			piece[0] = ((Piece[]) obj)[0];
 		}, textures);
@@ -100,9 +100,9 @@ class StomachionTests {
 	 */
 	void testPieceSelectedFalseOnInit() {
 		int[] a = {999};
-		ArrayList<int[]> textures = new ArrayList<>();
+		ArrayList<double[]> textures = new ArrayList<>();
 		for (int i = 0; i < 14; i++)
-			textures.add(new int[3]);
+			textures.add(new double[3]);
         Controller controller = new Controller((observable, obj) -> a[0] = 444, textures);
         
         assertFalse(controller.hasPieceSelected());

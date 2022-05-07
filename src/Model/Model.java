@@ -30,7 +30,7 @@ public class Model extends Observable {
      * @param observer object
      * @param textures list of colors (defined by int array of r,g,b).
      */
-    public Model(Observer observer, ArrayList<int[]> textures) {
+    public Model(Observer observer, ArrayList<double[]> textures) {
         // TODO THIS DOES NOT NEED ANY ARGS NOW
         this.mainBox = new BoundingBox(textures);
 
@@ -60,10 +60,9 @@ public class Model extends Observable {
     /**
      * Picks up a piece
      *
-     * @param gridX coordinate
-     * @param gridY coordinate
+     * @param gridX x-coordinate
+     * @param gridY y-coordinate
      */
-    @SuppressWarnings("deprecation")
     public void pluckPiece(double gridX, double gridY) {
         Piece[] array = this.mainBox.getList();
         for (int i = 0; i < 14; i++) {
@@ -136,11 +135,17 @@ public class Model extends Observable {
      */
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
+
+        selected.highlight(PieceState.VALID);
         for (Piece piece : mainBox.getList()) {
-            selected.highlight(piece != selected && piece.collidesWith(selected) ? PieceState.INVALID : PieceState.VALID);
-//            if (piece != selected && piece.collidesWith(selected))
-//                System.out.println("INVALID");
+            if (piece != selected && piece.collidesWith(selected)) {
+                selected.highlight(PieceState.INVALID);
+                break;
+            }
         }
+
+        setChanged();
+        notifyObservers(mainBox.getList());
     }
 
     /**
@@ -177,7 +182,20 @@ public class Model extends Observable {
         }
     }
 
-    public boolean checkPlacement(double gridX, double gridY) {
-        return false;
+    public void checkPlacement(double gridX, double gridY) {
+        double prevGlobalX = selected.getGlobalX();
+        double prevGlobalY = selected.getGlobalY();
+        selected.snapGlobalOffset();
+
+        selected.highlight(PieceState.VALID);
+        for (Piece piece : mainBox.getList()) {
+            if (piece.collidesWith(selected)) {
+                System.out.println("INVALID");
+                selected.highlight(PieceState.INVALID);
+                break;
+            }
+        }
+
+        selected.setGlobalOffset(prevGlobalX, prevGlobalY);
     }
 }

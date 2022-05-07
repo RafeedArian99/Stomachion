@@ -17,7 +17,7 @@ public class Piece {
 
     private boolean selected = false;
     private PieceState highlighted = PieceState.NEUTRAL;
-    private final int[] color;
+    private final double[] color;
 
     public enum PieceState {
         NEUTRAL, VALID, INVALID
@@ -28,7 +28,7 @@ public class Piece {
      *
      * @param pieceID Unique ID for the piece (0-13)
      */
-    public Piece(int pieceID, int[] color) {
+    public Piece(int pieceID, double[] color) {
         this.pieceID = pieceID;
         this.color = color;
 
@@ -67,7 +67,7 @@ public class Piece {
      *
      * @return the color assigned to this piece
      */
-    public int[] getColor() {
+    public double[] getColor() {
         return this.color;
     }
 
