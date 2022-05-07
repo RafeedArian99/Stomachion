@@ -23,6 +23,7 @@ public class Model extends Observable {
 
     private double selectedInitialX, selectedInitialY;
     private double selectedGlobalX, selectedGlobalY;
+    private double prevValidX, prevValidY;
 
     /**
      * Constructs the model
@@ -122,6 +123,8 @@ public class Model extends Observable {
     public void placePiece() {
         this.selected.setSelected(false);
         this.selectionHas = false;
+        this.selected.setGlobalOffset(prevValidX, prevValidY);
+        this.selected.highlight(PieceState.NEUTRAL);
         this.selected.snapGlobalOffset();
 
         setChanged();
@@ -144,6 +147,11 @@ public class Model extends Observable {
                 selected.highlight(PieceState.INVALID);
                 break;
             }
+        }
+
+        if (selected.getHighlightState() != PieceState.INVALID) {
+            prevValidX = selectedGlobalX + gridX - selectedInitialX;
+            prevValidY = selectedGlobalY + gridY - selectedInitialY;
         }
 
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
