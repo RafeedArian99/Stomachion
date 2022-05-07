@@ -142,10 +142,51 @@ public class Model extends Observable {
      */
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
-        selected.snapGlobalOffset();
+        checkPlacement(gridX, gridY);
+    }
 
+    /**
+     * Rotates a selected piece
+     *
+     * @param x   coordinate
+     * @param y   coordinate
+     * @param dir to rotate
+     */
+    public void rotateAbout(double x, double y, boolean dir) {
+        selected.rotateAbout(x, y, dir);
+        selectedInitialX = x;
+        selectedInitialY = y;
+        selectedGlobalX = selected.getGlobalX();
+        selectedGlobalY = selected.getGlobalY();
+        checkPlacement(x, y);
+    }
+
+    /**
+     * Flips a selected piece
+     *
+     * @param x   coordinate
+     * @param y   coordinate
+     * @param dir to flip
+     */
+    public void flipAbout(double x, double y, boolean dir) {
+        selected.flipAbout(x, y, dir);
+        selectedInitialX = x;
+        selectedInitialY = y;
+        selectedGlobalX = selected.getGlobalX();
+        selectedGlobalY = selected.getGlobalY();
+        checkPlacement(x, y);
+    }
+
+    /* Private methods */
+
+    // Checks if placement of the current selected piece is valid.
+    private void checkPlacement(double gridX, double gridY) {
         selected.highlight(PieceState.VALID);
-        for (Piece piece : mainBox.getList()) {
+
+        if (!mainBox.encapsulates(selected)) {
+            selected.highlight(PieceState.INVALID);
+        }
+        else for (Piece piece : mainBox.getList()) {
             if (piece != selected && piece.collidesWith(selected, false)) {
                 selected.highlight(PieceState.INVALID);
                 break;
@@ -160,39 +201,5 @@ public class Model extends Observable {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
         setChanged();
         notifyObservers(mainBox.getList());
-    }
-
-    /**
-     * Rotates a selected piece
-     *
-     * @param x   coordinate
-     * @param y   coordinate
-     * @param dir to rotate
-     */
-    public void rotateAbout(double x, double y, boolean dir) {
-        if (this.selectionHas) {
-            selected.rotateAbout(x, y, dir);
-            selectedInitialX = x;
-            selectedInitialY = y;
-            selectedGlobalX = selected.getGlobalX();
-            selectedGlobalY = selected.getGlobalY();
-        }
-    }
-
-    /**
-     * Flips a selected piece
-     *
-     * @param x   coordinate
-     * @param y   coordinate
-     * @param dir to flip
-     */
-    public void flipAbout(double x, double y, boolean dir) {
-        if (this.selectionHas) {
-            selected.flipAbout(x, y, dir);
-            selectedInitialX = x;
-            selectedInitialY = y;
-            selectedGlobalX = selected.getGlobalX();
-            selectedGlobalY = selected.getGlobalY();
-        }
     }
 }

@@ -20,7 +20,7 @@ public class BoundingBox {
      */
     public BoundingBox(ArrayList<double[]> textures) {
         Random random = new Random();
-        long seed = 8645372004284565361L; // random.nextLong();
+        long seed = random.nextLong();
         System.out.println("Seed: " + seed); // Broken seed: 8645372004284565361
         random = new Random(seed);
 

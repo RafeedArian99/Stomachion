@@ -32,7 +32,7 @@ class Edge {
      * @param other other edge to check intersection with
      * @return true if this edge is intersected by another edge
      */
-    public boolean getsIntersectedBy(Edge other) {
+    public boolean getsIntersectedBy(Edge other, boolean checkCorners) {
         // Simplify all the edge ends
         double a = this.start.getX();
         double b = this.start.getY();
@@ -49,7 +49,7 @@ class Edge {
                     ((a - c) * (f - h) + (b - d) * (g - e));
 
             if (pointOfIntersection == b || pointOfIntersection == d)
-                return false;
+                return checkCorners;
 
             double dir = Math.signum(d - b);
             return Math.signum(pointOfIntersection - b) == dir && Math.signum(d - pointOfIntersection) == dir;
@@ -60,7 +60,7 @@ class Edge {
                     ((a - c) * (f - h) + b * (g - e) + d * (e - g));
 
             if (pointOfIntersection == a || pointOfIntersection == c)
-                return false;
+                return checkCorners;
 
             double dir = Math.signum(c - a);
             return Math.signum(pointOfIntersection - a) == dir && Math.signum(c - pointOfIntersection) == dir;
