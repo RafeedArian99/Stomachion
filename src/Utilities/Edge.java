@@ -49,7 +49,7 @@ class Edge {
                     ((a - c) * (f - h) + (b - d) * (g - e));
 
             if (pointOfIntersection == b || pointOfIntersection == d)
-                return true;
+                return false;
 
             double dir = Math.signum(d - b);
             return Math.signum(pointOfIntersection - b) == dir && Math.signum(d - pointOfIntersection) == dir;
@@ -60,7 +60,7 @@ class Edge {
                     ((a - c) * (f - h) + b * (g - e) + d * (e - g));
 
             if (pointOfIntersection == a || pointOfIntersection == c)
-                return true;
+                return false;
 
             double dir = Math.signum(c - a);
             return Math.signum(pointOfIntersection - a) == dir && Math.signum(c - pointOfIntersection) == dir;
@@ -84,7 +84,7 @@ class Edge {
         double endXVector = end.getX() - start.getX();
         double vXVector = v.getX() - start.getX();
         double dir = Math.signum(endXVector);
-        if ((Math.signum(vXVector) != 0 && Math.signum(vXVector) != dir) || Math.signum(end.getX() - v.getX()) != dir)
+        if ((Math.signum(vXVector) != 0 && Math.signum(vXVector) != dir) || Math.signum(end.getX() - v.getX()) != dir) // Math.signum(vXVector) != 0 &&
             return false;
 
         double yIntersection = (end.getY() - start.getY()) * vXVector / endXVector + start.getY();

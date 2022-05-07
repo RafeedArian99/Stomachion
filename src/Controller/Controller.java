@@ -57,9 +57,9 @@ public class Controller {
      * @param gridX: a double representing the X coordinate to attempt to place a piece at.
      * @param gridY: a double representing the Y coordinate to attempt to place a piece at.
      */
-    public void checkPlacement(double gridX, double gridY) {
-        model.checkPlacement(gridX, gridY);
-    }
+//    public void checkPlacement(double gridX, double gridY) {
+//        model.checkPlacement(gridX, gridY);
+//    }
 
     
     public void updateSelectedPosition(double gridX, double gridY) {

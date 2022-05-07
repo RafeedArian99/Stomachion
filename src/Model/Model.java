@@ -102,6 +102,7 @@ public class Model extends Observable {
                 array[i].highlight(PieceState.NEUTRAL);
             }
         }
+
         setChanged();
         notifyObservers(this.mainBox.getList());
     }
@@ -135,15 +136,17 @@ public class Model extends Observable {
      */
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
+        selected.snapGlobalOffset();
 
         selected.highlight(PieceState.VALID);
         for (Piece piece : mainBox.getList()) {
-            if (piece != selected && piece.collidesWith(selected)) {
+            if (piece != selected && piece.collidesWith(selected, false)) {
                 selected.highlight(PieceState.INVALID);
                 break;
             }
         }
 
+        selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
         setChanged();
         notifyObservers(mainBox.getList());
     }
@@ -182,20 +185,20 @@ public class Model extends Observable {
         }
     }
 
-    public void checkPlacement(double gridX, double gridY) {
-        double prevGlobalX = selected.getGlobalX();
-        double prevGlobalY = selected.getGlobalY();
-        selected.snapGlobalOffset();
-
-        selected.highlight(PieceState.VALID);
-        for (Piece piece : mainBox.getList()) {
-            if (piece.collidesWith(selected)) {
-                System.out.println("INVALID");
-                selected.highlight(PieceState.INVALID);
-                break;
-            }
-        }
-
-        selected.setGlobalOffset(prevGlobalX, prevGlobalY);
-    }
+//    public void checkPlacement(double gridX, double gridY) {
+//        double prevGlobalX = selected.getGlobalX();
+//        double prevGlobalY = selected.getGlobalY();
+//        selected.snapGlobalOffset();
+//
+//        selected.highlight(PieceState.VALID);
+//        for (Piece piece : mainBox.getList()) {
+//            if (piece.collidesWith(selected)) {
+//                System.out.println("INVALID");
+//                selected.highlight(PieceState.INVALID);
+//                break;
+//            }
+//        }
+//
+//        selected.setGlobalOffset(prevGlobalX, prevGlobalY);
+//    }
 }

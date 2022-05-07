@@ -20,7 +20,7 @@ public class bbTest {
         Piece piece1 = new Piece(2, new double[3]);
         piece1.setGlobalOffset(0.5, 2);
 
-        System.out.println(piece.collidesWith(piece1));
+        System.out.println(piece.collidesWith(piece1, false));
     }
 
 }

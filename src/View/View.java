@@ -67,7 +67,7 @@ public class View extends Application implements Observer {
     private static final double LINE_WIDTH = 2;
     private static final Color NEUTRAL_LINE_COLOR = Color.rgb(36, 36, 36);
     private static final Color VALID_LINE_COLOR = Color.rgb(74, 255, 0);
-    private static final Color INVALID_LINE_COLOR = Color.rgb(128, 0, 0);
+    private static final Color INVALID_LINE_COLOR = Color.rgb(255, 0, 0);
 
     // Color settings
     private static final Color BG_COLOR = Color.grayRgb(230);
@@ -411,9 +411,9 @@ public class View extends Application implements Observer {
 
         public SelectionBox() {
             canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
-            GraphicsContext gc = canvas.getGraphicsContext2D(); // TODO: Remove
-            gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
-            gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Remove
+//            GraphicsContext gc = canvas.getGraphicsContext2D(); // TODO: Remove
+//            gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
+//            gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Remove
 
             rotateAnimation = new RotateTransition();
             rotateAnimation.setDuration(Duration.millis(ANIMATION_DURATION));
@@ -430,8 +430,8 @@ public class View extends Application implements Observer {
             canvas.setLayoutY(WINDOW_SIZE);
 
             GraphicsContext gc = canvas.getGraphicsContext2D();
-            gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
-            gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Remove
+//            gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
+//            gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Remove
             gc.setLineWidth(LINE_WIDTH);
             gc.setLineCap(StrokeLineCap.ROUND);
 

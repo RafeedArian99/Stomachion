@@ -60,11 +60,11 @@ public class BoundingBox {
                 boolean checker = false;
 
                 // checks if the positioning is valid
-                if (!this.encapsulates(newPiece) || centerBoard.collidesWith(newPiece)) {
+                if (!this.encapsulates(newPiece) || centerBoard.collidesWith(newPiece, true)) {
                     checker = true;
                 }
                 else for (int j = 0; j < i; j++) {
-                    if (newPiece.collidesWith(pieceList[j])) {
+                    if (newPiece.collidesWith(pieceList[j], true)) {
                         checker = true;
                     }
                 }
