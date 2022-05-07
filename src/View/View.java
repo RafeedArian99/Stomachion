@@ -36,7 +36,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class View extends Application implements Observer {
-    // Variables with multiple access points
+    // Variables with multiple accesses
     private Controller controller;
     private Canvas mainCanvas;
     private Scene scene;
@@ -253,11 +253,6 @@ public class View extends Application implements Observer {
     }
 
     private void drawPiece(Piece piece, Canvas canvas, double offsetX, double offsetY, double[] xCoords, double[] yCoords) {
-//        if (xCoords == null && yCoords == null) {
-//            double[][] allCoords = piece.getAllCoords();
-//            xCoords = allCoords[0];
-//            yCoords = allCoords[1];
-
         double[] correctedXCoords = new double[xCoords.length];
         for (int i = 0; i < xCoords.length; i++)
             correctedXCoords[i] = xCoords[i] * CELL_SIZE + offsetX;
