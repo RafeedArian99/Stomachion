@@ -4,11 +4,6 @@ package Utilities;
  * This class models a piece of the Stomachion puzzle.
  */
 public class Piece {
-    public static final boolean VERTICAL = true;
-    public static final boolean HORIZONTAL = false;
-    public static final boolean CLOCKWISE = true;
-    public static final boolean COUNTERCLOCKWISE = false;
-
     private Vertex globalOffset;
     private final Edge[] localEdges;
     private final int pieceID;
@@ -184,7 +179,8 @@ public class Piece {
             Edge localEdgeCorrected = localEdge.add(globalOffset);
             for (Edge otherEdge : other.localEdges) {
                 Edge otherEdgeCorrected = otherEdge.add(other.globalOffset);
-                if (localEdgeCorrected.getsIntersectedBy(otherEdgeCorrected) && otherEdgeCorrected.getsIntersectedBy(localEdgeCorrected))
+                if (localEdgeCorrected.getsIntersectedBy(otherEdgeCorrected, checkCorners) &&
+                        otherEdgeCorrected.getsIntersectedBy(localEdgeCorrected, checkCorners))
                     return true;
             }
         }
