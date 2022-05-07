@@ -181,6 +181,7 @@ public class Model extends Observable {
 
     // Checks if placement of the current selected piece is valid.
     private void checkPlacement(double gridX, double gridY) {
+        selected.snapGlobalOffset();
         selected.highlight(PieceState.VALID);
 
         if (!mainBox.encapsulates(selected)) {
