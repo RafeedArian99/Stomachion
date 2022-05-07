@@ -6,10 +6,10 @@ import javafx.animation.ScaleTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -20,7 +20,6 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -46,13 +45,14 @@ public class View extends Application implements Observer {
     private Text text;
 
     // Selection Canvas variables
-    private Canvas selectionCanvas;
-    private double initialMouseX, initialMouseY;
-    private boolean previouslySelected;
+    private Selection selection;
+//    private Canvas selectionCanvas;
+//    private double initialMouseX, initialMouseY;
+//    private boolean previouslySelected;
 
     // Animation variables and settings
-    private RotateTransition rotateTransition;
-    private ScaleTransition scaleTransition;
+//    private RotateTransition rotateTransition;
+//    private ScaleTransition scaleTransition;
     private static final double ANIMATION_DURATION = 100;
     private static final KeyCode CLOCKWISE_ROTATE_KEY = KeyCode.D;
     private static final KeyCode COUNTERCLOCKWISE_ROTATE_KEY = KeyCode.A;
@@ -78,14 +78,6 @@ public class View extends Application implements Observer {
         launch(args);
     }
 
-    /**
-     * This is the first page that opens up with the main menu. it picks a random color for the background of the menu, displays the name of the game
-     * and a start button. In the top right it displays three buttons for the different textures that could be used in the game as well as text that
-     * shows which of the textures you have selected. When the start button is pressed, it will open a new window with the stomachion game with the
-     * specified texture.
-     * @Param stage
-     * 
-     */
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("Stomachion");
@@ -97,17 +89,17 @@ public class View extends Application implements Observer {
         Scene scene = new Scene(root, WINDOW_SIZE, WINDOW_SIZE, Color.rgb(red, green, blue));
         Text text = new Text(105, 200, "STOMACHION");
         Button startButton = new Button("START");
-        Image textureImage1 = new Image("/Textures/final-14-1x.png");
+        Image textureImage1 = new Image("/Textures/final-14-1x.png", 280, 20, true, false);
         ImageView image1Texture = new ImageView(textureImage1);
-        image1Texture.setFitWidth(90);
+        image1Texture.setFitWidth(280);
         image1Texture.setFitHeight(20);
-        Image textureImage2 = new Image("/Textures/blues-14-1x.png");
+        Image textureImage2 = new Image("/Textures/blues-14-1x.png", 280, 20, true, false);
         ImageView image2Texture = new ImageView(textureImage2);
-        image2Texture.setFitWidth(90);
+        image2Texture.setFitWidth(280);
         image2Texture.setFitHeight(20);
-        Image textureImage3 = new Image("/Textures/uofa_colors-14-1x.png");
+        Image textureImage3 = new Image("/Textures/uofa_colors-14-1x.png", 280, 20, true, false);
         ImageView image3Texture = new ImageView(textureImage3);
-        image3Texture.setFitWidth(90);
+        image3Texture.setFitWidth(280);
         image3Texture.setFitHeight(20);
         Button texture1 = new Button("", image1Texture);
         Button texture2 = new Button("", image2Texture);
@@ -118,9 +110,9 @@ public class View extends Application implements Observer {
         text.setFont(Font.font("Consolas", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 75));
         text.setFill(Color.LIGHTGRAY);
         startButton.relocate(250, WINDOW_SIZE / 2);
-        texture1.relocate(610, 0);
-        texture2.relocate(610, 30);
-        texture3.relocate(610, 60);
+        texture1.relocate(415, 0);
+        texture2.relocate(415, 30);
+        texture3.relocate(415, 60);
         startButton.setPrefSize(200, 100);
         startButton.setFont(Font.font("Consolas", FontWeight.EXTRA_BOLD, FontPosture.REGULAR, 25));
         startButton.setTextFill(Color.BLUE);
@@ -150,7 +142,6 @@ public class View extends Application implements Observer {
     }
 
     public void startGame(Stage stage) {
-        stage.setTitle("Stomachion");
         GraphicsContext gc;
 
         // Main canvas
@@ -162,21 +153,21 @@ public class View extends Application implements Observer {
         mainCanvas.setOnMouseMoved(new MouseMoveHandler());
 
         // Selection canvas
-        selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
-        gc = selectionCanvas.getGraphicsContext2D();
-        gc.setLineWidth(LINE_WIDTH);
-        gc.setLineCap(StrokeLineCap.ROUND);
-        selectionCanvas.setLayoutX(WINDOW_SIZE);
-        selectionCanvas.setLayoutY(WINDOW_SIZE);
-
+//        selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+//        gc = selectionCanvas.getGraphicsContext2D();
+//        gc.setLineWidth(LINE_WIDTH);
+//        gc.setLineCap(StrokeLineCap.ROUND);
+//        selectionCanvas.setLayoutX(WINDOW_SIZE);
+//        selectionCanvas.setLayoutY(WINDOW_SIZE);
+        selection = new Selection();
         // Animations
-        rotateTransition = new RotateTransition();
-        rotateTransition.setDuration(Duration.millis(ANIMATION_DURATION));
-        rotateTransition.setNode(selectionCanvas);
-
-        scaleTransition = new ScaleTransition();
-        scaleTransition.setDuration(Duration.millis(ANIMATION_DURATION));
-        scaleTransition.setNode(selectionCanvas);
+//        rotateTransition = new RotateTransition();
+//        rotateTransition.setDuration(Duration.millis(ANIMATION_DURATION));
+//        rotateTransition.setNode(selectionCanvas);
+//
+//        scaleTransition = new ScaleTransition();
+//        scaleTransition.setDuration(Duration.millis(ANIMATION_DURATION));
+//        scaleTransition.setNode(selectionCanvas);
 
         // Display the dots
         Canvas gridCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
@@ -203,8 +194,9 @@ public class View extends Application implements Observer {
         vBox.getChildren().addAll(text);
         int inset = 50;
         vBox.setPadding(new Insets(inset, inset, inset, inset));
-        group.getChildren().addAll(gridCanvas, vBox, mainCanvas, selectionCanvas);
+        group.getChildren().addAll(gridCanvas, vBox, mainCanvas, selection.canvas);
         scene = new Scene(group, WINDOW_SIZE, WINDOW_SIZE);
+        selection.reset(); // Will get added to scene automatically
         scene.setFill(BG_COLOR);
         scene.setOnMouseDragged(new MouseDragHandler());
         scene.setOnMouseReleased(new MouseReleaseHandler());
@@ -242,11 +234,16 @@ public class View extends Application implements Observer {
 
         if (highlightedPiece != null) {
             if (highlightedPiece.isSelected()) {
-                previouslySelected = true;
-                selectionCanvas.setLayoutX(initialMouseX - WINDOW_SIZE / 2);
-                selectionCanvas.setLayoutY(initialMouseY - WINDOW_SIZE / 2);
+                selection.moveCenterTo(selection.initialX, selection.initialY);
+//                previouslySelected = true;
+//                selectionCanvas.setLayoutX(initialMouseX - WINDOW_SIZE / 2);
+//                selectionCanvas.setLayoutY(initialMouseY - WINDOW_SIZE / 2);
 
-                drawPiece(highlightedPiece, selectionCanvas, WINDOW_SIZE / 2 - initialMouseX, WINDOW_SIZE / 2 - initialMouseY);
+//                drawPiece(highlightedPiece, selectionCanvas, WINDOW_SIZE / 2 - initialMouseX, WINDOW_SIZE / 2 - initialMouseY);
+                if (!selection.previouslySelected) {
+                    selection.draw(highlightedPiece);
+                }
+                selection.previouslySelected = true;
             }
             else {
                 drawPiece(highlightedPiece, mainCanvas, 0, 0);
@@ -314,11 +311,11 @@ public class View extends Application implements Observer {
         @Override
         public void handle(MouseEvent mouseEvent) {
             if (mouseEvent.isPrimaryButtonDown()) {
-                initialMouseX = mouseEvent.getSceneX();
-                initialMouseY = mouseEvent.getSceneY();
+                selection.initialX = mouseEvent.getSceneX();
+                selection.initialY = mouseEvent.getSceneY();
 
-                double gridX = initialMouseX / CELL_SIZE;
-                double gridY = initialMouseY / CELL_SIZE;
+                double gridX = selection.initialX / CELL_SIZE;
+                double gridY = selection.initialY / CELL_SIZE;
                 controller.pluckPiece(gridX, gridY);
             }
         }
@@ -331,8 +328,9 @@ public class View extends Application implements Observer {
                 double mouseX = mouseEvent.getSceneX();
                 double mouseY = mouseEvent.getSceneY();
 
-                selectionCanvas.setLayoutX(mouseX - WINDOW_SIZE / 2);
-                selectionCanvas.setLayoutY(mouseY - WINDOW_SIZE / 2);
+//                selectionCanvas.setLayoutX(mouseX - WINDOW_SIZE / 2);
+//                selectionCanvas.setLayoutY(mouseY - WINDOW_SIZE / 2);
+                selection.moveCenterTo(mouseX, mouseY);
                 KeyPressHandler kps = (KeyPressHandler) scene.getOnKeyPressed();
                 kps.mouseX = mouseX;
                 kps.mouseY = mouseY;
@@ -344,22 +342,23 @@ public class View extends Application implements Observer {
     private class MouseReleaseHandler implements EventHandler<MouseEvent> {
         @Override
         public void handle(MouseEvent mouseEvent) {
-            if (previouslySelected) {
-                previouslySelected = false;
+            if (selection.previouslySelected) {
+                selection.previouslySelected = false;
 
                 KeyPressHandler kps = (KeyPressHandler) scene.getOnKeyPressed();
                 kps.flipX = -2;
                 kps.flipY = -2;
                 kps.horizontal = false;
 
-                selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
-                GraphicsContext gc = selectionCanvas.getGraphicsContext2D();
-                selectionCanvas.setLayoutX(WINDOW_SIZE);
-                selectionCanvas.setLayoutY(WINDOW_SIZE);
-
-                ((Group) scene.getRoot()).getChildren().set(3, selectionCanvas);
-                rotateTransition.setNode(selectionCanvas);
-                scaleTransition.setNode(selectionCanvas);
+//                selectionCanvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+//                GraphicsContext gc = selectionCanvas.getGraphicsContext2D();
+//                selectionCanvas.setLayoutX(WINDOW_SIZE);
+//                selectionCanvas.setLayoutY(WINDOW_SIZE);
+//
+//                ((Group) scene.getRoot()).getChildren().set(3, selectionCanvas);
+//                rotateTransition.setNode(selectionCanvas);
+//                scaleTransition.setNode(selectionCanvas);
+                selection.reset();
 
                 controller.placePiece();
             }
@@ -376,28 +375,78 @@ public class View extends Application implements Observer {
             if (controller.hasPieceSelected()) {
                 boolean clockwise, vertical;
                 if ((clockwise = keyEvent.getCode() == CLOCKWISE_ROTATE_KEY) || keyEvent.getCode() == COUNTERCLOCKWISE_ROTATE_KEY) {
-                    rotateTransition.setByAngle(clockwise ? 90 : -90);
-                    rotateTransition.play();
+//                    rotateTransition.setByAngle(clockwise ? 90 : -90);
+//                    rotateTransition.play();
+                    selection.rotateAnimation.setByAngle(clockwise ? 90 : -90);
+                    selection.rotateAnimation.play();
 
                     horizontal = !horizontal;
                     controller.rotateAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, clockwise);
                 }
                 else if ((vertical = keyEvent.getCode() == VERTICAL_FLIP_KEY) || keyEvent.getCode() == HORIZONTAL_FLIP_KEY) {
                     if (vertical == horizontal) {
-                        scaleTransition.setByX(flipX);
-                        scaleTransition.setByY(0);
+                        selection.flipAnimation.setByX(flipX);
+                        selection.flipAnimation.setByY(0);
                         flipX *= -1;
                     }
                     else {
-                        scaleTransition.setByX(0);
-                        scaleTransition.setByY(flipY);
+                        selection.flipAnimation.setByX(0);
+                        selection.flipAnimation.setByY(flipY);
                         flipY *= -1;
                     }
 
-                    scaleTransition.play();
+                    selection.flipAnimation.play();
                     controller.flipAbout(mouseX / CELL_SIZE, mouseY / CELL_SIZE, vertical);
                 }
             }
+        }
+    }
+
+    private class Selection {
+        private Canvas canvas;
+        private double[] xCoords, yCoords;
+        private double initialX, initialY;
+        private boolean previouslySelected;
+
+        private final RotateTransition rotateAnimation;
+        private final ScaleTransition flipAnimation;
+
+        public Selection() {
+            canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+            GraphicsContext gc = canvas.getGraphicsContext2D(); // TODO: Remove
+            gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
+            gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Remove
+
+            rotateAnimation = new RotateTransition();
+            rotateAnimation.setDuration(Duration.millis(ANIMATION_DURATION));
+
+            flipAnimation = new ScaleTransition();
+            flipAnimation.setDuration(Duration.millis(ANIMATION_DURATION));
+        }
+
+        public void reset() {
+            canvas = new Canvas(WINDOW_SIZE, WINDOW_SIZE);
+            canvas.setLayoutX(WINDOW_SIZE);
+            canvas.setLayoutY(WINDOW_SIZE);
+
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            gc.setFill(Color.rgb(0, 255, 0, 0.2)); // TODO: Remove
+            gc.fillRect(0, 0, WINDOW_SIZE, WINDOW_SIZE); // TODO: Remove
+            gc.setLineWidth(LINE_WIDTH);
+            gc.setLineCap(StrokeLineCap.ROUND);
+
+            ((Group) scene.getRoot()).getChildren().set(3, canvas);
+            rotateAnimation.setNode(canvas);
+            flipAnimation.setNode(canvas);
+        }
+
+        public void moveCenterTo(double mouseX, double mouseY) {
+            canvas.setLayoutX(mouseX - WINDOW_SIZE / 2);
+            canvas.setLayoutY(mouseY - WINDOW_SIZE / 2);
+        }
+
+        public void draw(Piece highlightedPiece) {
+
         }
     }
 }
