@@ -18,15 +18,11 @@ public class BoundingBox {
      * Creates the bounding box and places all of the shapes with random positions,
      * colors, and orientations.
      */
-    public BoundingBox(ArrayList<int[]> textures) {
+    public BoundingBox(ArrayList<double[]> textures) {
         Random random = new Random();
-        long seed = random.nextLong();
-        System.out.println("Seed: " + seed);
+        long seed = 8645372004284565361L; // random.nextLong();
+        System.out.println("Seed: " + seed); // Broken seed: 8645372004284565361
         random = new Random(seed);
-
-        /* TODO: Remove this comment
-        Seeds that don't work:
-         */
 
         // creates the array to put the pieces in
         this.pieceList = new Piece[14];
@@ -60,11 +56,11 @@ public class BoundingBox {
                 boolean checker = false;
 
                 // checks if the positioning is valid
-                if (!this.encapsulates(newPiece) || centerBoard.collidesWith(newPiece)) {
+                if (!this.encapsulates(newPiece) || centerBoard.collidesWith(newPiece, true)) {
                     checker = true;
                 }
                 else for (int j = 0; j < i; j++) {
-                    if (newPiece.collidesWith(pieceList[j])) {
+                    if (newPiece.collidesWith(pieceList[j], true)) {
                         checker = true;
                     }
                 }

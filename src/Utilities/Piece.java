@@ -17,7 +17,7 @@ public class Piece {
 
     private boolean selected = false;
     private PieceState highlighted = PieceState.NEUTRAL;
-    private final int[] color;
+    private final double[] color;
 
     public enum PieceState {
         NEUTRAL, VALID, INVALID
@@ -28,7 +28,7 @@ public class Piece {
      *
      * @param pieceID Unique ID for the piece (0-13)
      */
-    public Piece(int pieceID, int[] color) {
+    public Piece(int pieceID, double[] color) {
         this.pieceID = pieceID;
         this.color = color;
 
@@ -67,7 +67,7 @@ public class Piece {
      *
      * @return the color assigned to this piece
      */
-    public int[] getColor() {
+    public double[] getColor() {
         return this.color;
     }
 
@@ -174,10 +174,11 @@ public class Piece {
     /**
      * Returns true if this piece is colliding with another one.
      *
-     * @param other piece whose collision is to be tested
+     * @param other        piece whose collision is to be tested
+     * @param checkCorners whether or not to check the corners of the piece
      * @return true if this piece is colliding with another one
      */
-    public boolean collidesWith(Piece other) {
+    public boolean collidesWith(Piece other, boolean checkCorners) {
         // Check edges for intersection
         for (Edge localEdge : this.localEdges) {
             Edge localEdgeCorrected = localEdge.add(globalOffset);
@@ -188,15 +189,17 @@ public class Piece {
             }
         }
 
-        // Check vertices for encapsulation
-        for (Edge localEdge : this.localEdges) {
-            if (other.encapsulates(localEdge.start.add(globalOffset))) {
-                return true;
+        if (checkCorners) {
+            // Check vertices for encapsulation
+            for (Edge localEdge : this.localEdges) {
+                if (other.encapsulates(localEdge.start.add(globalOffset))) {
+                    return true;
+                }
             }
-        }
-        for (Edge otherEdge : other.localEdges) {
-            if (this.encapsulates(otherEdge.start.add(other.globalOffset))) {
-                return true;
+            for (Edge otherEdge : other.localEdges) {
+                if (this.encapsulates(otherEdge.start.add(other.globalOffset))) {
+                    return true;
+                }
             }
         }
 

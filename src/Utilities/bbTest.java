@@ -16,11 +16,11 @@ public class bbTest {
 //		System.out.println(test1.encapsulates(test));
 //		test.rotateAbout(0, 0, false);
 //		System.out.println(test1.encapsulates(test));
-        Piece piece = new Piece(0, new int[3]);
-        Piece piece1 = new Piece(2, new int[3]);
+        Piece piece = new Piece(0, new double[3]);
+        Piece piece1 = new Piece(2, new double[3]);
         piece1.setGlobalOffset(0.5, 2);
 
-        System.out.println(piece.collidesWith(piece1));
+        System.out.println(piece.collidesWith(piece1, false));
     }
 
 }

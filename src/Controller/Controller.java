@@ -14,7 +14,7 @@ public class Controller {
      * @param observer: Observer type object to be passed through to Model.
      * @param textures: list of textures to be passed through to Model.
      */
-    public Controller(Observer observer, ArrayList<int[]> textures) {
+    public Controller(Observer observer, ArrayList<double[]> textures) {
         model = new Model(observer, textures);
     }
 
@@ -57,9 +57,9 @@ public class Controller {
      * @param gridX: a double representing the X coordinate to attempt to place a piece at.
      * @param gridY: a double representing the Y coordinate to attempt to place a piece at.
      */
-    public void checkPlacement(double gridX, double gridY) {
-        model.checkPlacement(gridX, gridY);
-    }
+//    public void checkPlacement(double gridX, double gridY) {
+//        model.checkPlacement(gridX, gridY);
+//    }
 
     
     public void updateSelectedPosition(double gridX, double gridY) {
@@ -89,7 +89,7 @@ public class Controller {
     /**
      * Makes call to Model's checkWin function, returns a boolean
      * that is true if the player found a valid solution.
-     * @return
+     * @return true if player found a solution
      */
     public boolean checkWin() {
         return model.checkWin();

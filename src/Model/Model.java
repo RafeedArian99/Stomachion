@@ -23,6 +23,7 @@ public class Model extends Observable {
 
     private double selectedInitialX, selectedInitialY;
     private double selectedGlobalX, selectedGlobalY;
+    private double prevValidX, prevValidY;
 
     /**
      * Constructs the model
@@ -30,7 +31,7 @@ public class Model extends Observable {
      * @param observer object
      * @param textures list of colors (defined by int array of r,g,b).
      */
-    public Model(Observer observer, ArrayList<int[]> textures) {
+    public Model(Observer observer, ArrayList<double[]> textures) {
         // TODO THIS DOES NOT NEED ANY ARGS NOW
         this.mainBox = new BoundingBox(textures);
 
@@ -45,6 +46,9 @@ public class Model extends Observable {
      * @return true if the game is won
      */
     public boolean checkWin() {
+        if (this.selectionHas)
+            return false;
+
         boolean checker = true;
         Piece[] pieces = this.mainBox.getList();
 
@@ -60,10 +64,9 @@ public class Model extends Observable {
     /**
      * Picks up a piece
      *
-     * @param gridX coordinate
-     * @param gridY coordinate
+     * @param gridX x-coordinate
+     * @param gridY y-coordinate
      */
-    @SuppressWarnings("deprecation")
     public void pluckPiece(double gridX, double gridY) {
         Piece[] array = this.mainBox.getList();
         for (int i = 0; i < 14; i++) {
@@ -76,6 +79,9 @@ public class Model extends Observable {
                 selectedInitialY = gridY;
                 selectedGlobalX = selected.getGlobalX();
                 selectedGlobalY = selected.getGlobalY();
+
+                prevValidX = selectedGlobalX;
+                prevValidY = selectedGlobalY;
 
                 break;
             }
@@ -103,6 +109,7 @@ public class Model extends Observable {
                 array[i].highlight(PieceState.NEUTRAL);
             }
         }
+
         setChanged();
         notifyObservers(this.mainBox.getList());
     }
@@ -122,10 +129,9 @@ public class Model extends Observable {
     public void placePiece() {
         this.selected.setSelected(false);
         this.selectionHas = false;
+        this.selected.setGlobalOffset(prevValidX, prevValidY);
+        this.selected.highlight(PieceState.NEUTRAL);
         this.selected.snapGlobalOffset();
-
-        setChanged();
-        notifyObservers(this.mainBox.getList());
     }
 
     /**
@@ -136,11 +142,24 @@ public class Model extends Observable {
      */
     public void updateSelectedPosition(double gridX, double gridY) {
         selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
+        selected.snapGlobalOffset();
+
+        selected.highlight(PieceState.VALID);
         for (Piece piece : mainBox.getList()) {
-            selected.highlight(piece != selected && piece.collidesWith(selected) ? PieceState.INVALID : PieceState.VALID);
-//            if (piece != selected && piece.collidesWith(selected))
-//                System.out.println("INVALID");
+            if (piece != selected && piece.collidesWith(selected, false)) {
+                selected.highlight(PieceState.INVALID);
+                break;
+            }
         }
+
+        if (selected.getHighlightState() != PieceState.INVALID) {
+            prevValidX = selectedGlobalX + gridX - selectedInitialX;
+            prevValidY = selectedGlobalY + gridY - selectedInitialY;
+        }
+
+        selected.setGlobalOffset(selectedGlobalX + gridX - selectedInitialX, selectedGlobalY + gridY - selectedInitialY);
+        setChanged();
+        notifyObservers(mainBox.getList());
     }
 
     /**
@@ -175,9 +194,5 @@ public class Model extends Observable {
             selectedGlobalX = selected.getGlobalX();
             selectedGlobalY = selected.getGlobalY();
         }
-    }
-
-    public boolean checkPlacement(double gridX, double gridY) {
-        return false;
     }
 }
